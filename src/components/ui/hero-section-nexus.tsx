@@ -56,7 +56,7 @@ export function HeroSectionNexus() {
               backgroundSize: '200% auto',
             }}
           >
-            Build Something Amazing
+            Bringing Helpers to Your Doorstep.
           </motion.h1>
           <motion.p 
             className="text-xl md:text-2xl text-gray-300 mb-12"
@@ -65,7 +65,7 @@ export function HeroSectionNexus() {
               y: isHovered ? 0 : 5,
             }}
           >
-            Create stunning web experiences with our cutting-edge platform
+            "Reliable Home Help, Just a Click Away."
           </motion.p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <motion.div
@@ -87,7 +87,7 @@ export function HeroSectionNexus() {
               <Button
                 variant="outline"
                 size="xl"
-                className="border-white/20 text-white hover:bg-white/10 px-8 py-6"
+                className="border-white/20 text-black hover:bg-white/10 px-8 py-6"
               >
                 Learn More
               </Button>

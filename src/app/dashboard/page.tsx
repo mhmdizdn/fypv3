@@ -1,13 +1,13 @@
-import { Navbar } from "@/components/ui/navbar";
 import { HeroSectionNexus } from "@/components/ui/hero-section-nexus";
+import { Footer } from "@/components/ui/footer";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
       <main>
         <HeroSectionNexus />
       </main>
+      <Footer />
     </>
   );
 }
