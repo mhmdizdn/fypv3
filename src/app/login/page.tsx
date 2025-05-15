@@ -1,12 +1,26 @@
 'use client';
-import React, { useState } from "react";
+import SessionWrapper from "@/components/SessionWrapper";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 
-export default function LoginPage() {
+function LoginPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [userType, setUserType] = useState<"user" | "serviceProvider" | null>(null);
+
+  useEffect(() => {
+    if (status === "authenticated" && session) {
+      const userType = (session.user as any).userType;
+      if (userType === "serviceProvider") {
+        router.push("/dashboard/provider");
+      } else {
+        router.push("/index");
+      }
+    }
+  }, [status, session, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -22,28 +36,33 @@ export default function LoginPage() {
     const password = formData.get("password") as string;
 
     try {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, userType }),
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+        userType,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+      if (!result?.ok) {
+        throw new Error(result?.error || "Authentication failed");
       }
 
-      // Successful login
-      router.push("/index"); // Redirect to user index page
+      // The useEffect hook will handle the redirect based on the session
     } catch (err: any) {
-      setError(err.message);
+      console.error("Login error:", err);
+      setError(err.message || "An error occurred during login");
     } finally {
       setLoading(false);
     }
   };
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -56,6 +75,7 @@ export default function LoginPage() {
         )}
         <div className="mb-6 flex gap-4">
           <button
+            type="button"
             onClick={() => setUserType("user")}
             className={`flex-1 py-2 px-4 rounded transition-colors ${
               userType === "user"
@@ -66,6 +86,7 @@ export default function LoginPage() {
             User
           </button>
           <button
+            type="button"
             onClick={() => setUserType("serviceProvider")}
             className={`flex-1 py-2 px-4 rounded transition-colors ${
               userType === "serviceProvider"
@@ -108,6 +129,7 @@ export default function LoginPage() {
             <p className="text-gray-600 dark:text-gray-400">
               Don't have an account?{" "}
               <button
+                type="button"
                 onClick={() => router.push("/register")}
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
@@ -118,5 +140,13 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function LoginPageWrapper() {
+  return (
+    <SessionWrapper>
+      <LoginPage />
+    </SessionWrapper>
   );
 } 

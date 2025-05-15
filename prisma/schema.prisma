@@ -26,4 +26,17 @@ model ServiceProvider {
   email     String   @unique
   serviceType String
   password  String
+  services  Service[]
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  category    String
+  provider    ServiceProvider @relation(fields: [providerId], references: [id])
+  providerId  Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
