@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/ui/navbar';
 import { useSearchParams } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 // Dummy data for home service providers
 const serviceProviders = [
@@ -72,24 +73,20 @@ function ServiceNavbar() {
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const address = searchParams?.get('address') || 'Select your location';
 
-  // TSX-safe userName logic
-  const [userName, setUserName] = useState<string>('Account');
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setUserName(localStorage.getItem('userName') || 'Account');
-    }
-  }, []);
+  // Get user name from session
+  const { data: session } = useSession();
+  const userName = session?.user?.name || 'Account';
 
   const [showSettings, setShowSettings] = useState(false);
-  const handleLogout = () => {
+  const handleLogout = async () => {
     localStorage.clear();
-    window.location.href = '/login';
+    await signOut({ callbackUrl: "/login" });
   };
 
   return (
-    <nav className="w-full bg-white border-b border-gray-100 px-8 py-3 flex items-center justify-between">
+    <nav className="w-full bg-[#111] border-b border-black/30 px-6 py-3 flex items-center justify-between">
       {/* Left: Logo and App Name */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">
           <img
             src="/servicefinder-logo.png"
@@ -99,12 +96,12 @@ function ServiceNavbar() {
             className="object-contain"
           />
         </div>
-        <span className="text-[#E91E63] font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
-          service<span className="text-[#111]">finder</span>
+        <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
+          Service<span className="text-[#19E6A7]">Finder</span>
         </span>
       </div>
       {/* Center: Address */}
-      <div className="hidden md:flex items-center gap-2 text-gray-700 text-lg font-medium">
+      <div className="hidden md:flex items-center gap-2 text-white text-lg font-medium">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-[#111]">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 21c-4.418 0-8-4.03-8-9a8 8 0 1116 0c0 4.97-3.582 9-8 9z" />
           <circle cx="12" cy="12" r="3" fill="#E91E63" />
@@ -118,9 +115,6 @@ function ServiceNavbar() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span>{userName}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 8l4 4 4-4" />
-          </svg>
         </div>
         {/* Cart Button */}
         <button className="hover:text-[#E91E63] flex items-center" aria-label="Cart">
@@ -140,7 +134,7 @@ function ServiceNavbar() {
           </button>
           {showSettings && (
             <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
-              <a href="/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
+              <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
               <button
                 onClick={handleLogout}
                 className="w-full text-left px-4 py-2 hover:bg-gray-100"

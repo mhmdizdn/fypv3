@@ -12,21 +12,21 @@ export async function middleware(request: NextRequest) {
       // If user is already logged in, redirect based on user type
       const userType = (token as any).userType;
       if (userType === 'serviceProvider') {
-        return NextResponse.redirect(new URL('/dashboard/provider', request.url));
+        return NextResponse.redirect(new URL('/provider/dashboard', request.url));
       } else {
-        return NextResponse.redirect(new URL('/index', request.url));
+        return NextResponse.redirect(new URL('/customer/index', request.url));
       }
     }
     return NextResponse.next();
   }
 
   // Protect provider dashboard
-  if (request.nextUrl.pathname.startsWith('/dashboard/provider')) {
+  if (request.nextUrl.pathname.startsWith('/provider/dashboard')) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
     if ((token as any).userType !== 'serviceProvider') {
-      return NextResponse.redirect(new URL('/index', request.url));
+      return NextResponse.redirect(new URL('/customer/index', request.url));
     }
   }
 

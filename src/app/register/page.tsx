@@ -51,7 +51,7 @@ export default function RegisterPage() {
       }
 
       // Successful registration
-      router.push("/index"); // Redirect to user index page
+      router.push("/customer/index"); // Redirect to user index page
     } catch (err: any) {
       setError(err.message);
     } finally {

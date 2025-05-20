@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 // Define type for Google Maps
 declare global {
@@ -29,6 +29,15 @@ export default function IndexPage() {
   const googleMapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const [isCustomMarker, setIsCustomMarker] = useState(false);
+
+  const [showSettings, setShowSettings] = useState(false);
+  const { data: session } = useSession();
+  const userName = (session?.user as any)?.name || (session?.user as any)?.username || "Account";
+
+  const handleLogout = async () => {
+    localStorage.clear();
+    await signOut({ callbackUrl: "/login" });
+  };
 
   // Load Google Maps API
   useEffect(() => {
@@ -121,11 +130,6 @@ export default function IndexPage() {
       }
     };
   }, [locationWatchId]);
-
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.push("/login");
-  };
 
   // Function to update location after manual adjustment
   const updateUserLocation = (newLocation: {lat: number, lng: number}, isCustom: boolean = false) => {
@@ -434,54 +438,66 @@ export default function IndexPage() {
       params.append('lng', userLocation.lng.toString());
     }
     
-    router.push(`/services/recommendation?${params.toString()}`);
+    router.push(`/customer/services/recommendation?${params.toString()}`);
   };
 
   return (
     <>
       <nav className="w-full bg-[#111] border-b border-black/30 px-6 py-3 flex items-center justify-between">
-        {/* Left: Logo and App Name */}
-        <div className="flex items-center gap-1">
-          <div className="w-8 h-8 flex items-center justify-center">
-            <Image
-              src="/servicefinder-logo.png"
-              alt="ServiceFinder Logo"
-              width={32}
-              height={32}
-              priority
-            />
-          </div>
-          <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
-            Service<span className="text-[#19E6A7]">Finder</span>
-          </span>
+      {/* Left: Logo and App Name */}
+      <div className="flex items-center gap-1">
+        <div className="w-8 h-8 flex items-center justify-center">
+          <img
+            src="/servicefinder-logo.png"
+            alt="ServiceFinder Logo"
+            width={32}
+            height={32}
+            className="object-contain"
+          />
         </div>
-        {/* Center: Navigation Links and Search Bar */}
-        <div className="flex-1 flex flex-col md:flex-row md:items-center md:gap-6 mx-6">
-          <div className="hidden md:flex items-center gap-6 text-white text-sm font-medium">
-            <Link href="#" className="hover:text-[#19E6A7] transition-colors">Product</Link>
-            <Link href="#" className="hover:text-[#19E6A7] transition-colors">Customers</Link>
-            <div className="relative group">
-              <button className="flex items-center gap-1 hover:text-[#19E6A7] transition-colors">
-                Resources
-                <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </button>
-              <div className="absolute left-0 mt-2 min-w-[140px] bg-[#181818] rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-20">
-                <Link href="#" className="block px-4 py-2 hover:bg-[#222]">Blog</Link>
-                <Link href="#" className="block px-4 py-2 hover:bg-[#222]">Guides</Link>
-              </div>
-            </div>
-            <Link href="#" className="hover:text-[#19E6A7] transition-colors">About</Link>
-            <Link href="#" className="hover:text-[#19E6A7] transition-colors">Pricing</Link>
-          </div>
+        <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
+          Service<span className="text-[#19E6A7]">Finder</span>
+        </span>
+      </div>
+      {/* Right: User, Cart, Settings */}
+      <div className="flex items-center gap-6 text-gray-700 text-base">
+        <div className="flex items-center gap-1 cursor-pointer">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>{userName}</span>
+
         </div>
-        {/* Right: Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded"
-        >
-          Logout
+        {/* Cart Button */}
+        <button className="hover:text-[#E91E63] flex items-center" aria-label="Cart">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.6M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
+          </svg>
         </button>
-      </nav>
+        <div className="relative">
+          <button
+            className="hover:text-[#E91E63] flex items-center"
+            onClick={() => setShowSettings((s) => !s)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 3.75a.75.75 0 011.5 0v1.068a7.501 7.501 0 014.482 2.57l.76-.76a.75.75 0 111.06 1.06l-.76.76a7.501 7.501 0 012.57 4.482h1.068a.75.75 0 010 1.5h-1.068a7.501 7.501 0 01-2.57 4.482l.76.76a.75.75 0 11-1.06 1.06l-.76-.76a7.501 7.501 0 01-4.482 2.57v1.068a.75.75 0 01-1.5 0v-1.068a7.501 7.501 0 01-4.482-2.57l-.76.76a.75.75 0 11-1.06-1.06l.76-.76a7.501 7.501 0 01-2.57-4.482H3.75a.75.75 0 010-1.5h1.068a7.501 7.501 0 012.57-4.482l-.76-.76a.75.75 0 111.06-1.06l.76.76a7.501 7.501 0 014.482-2.57V3.75z" />
+              <circle cx="12" cy="12" r="3" fill="#E91E63" />
+            </svg>
+          </button>
+          {showSettings && (
+            <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
+              <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
       
       <main className="flex flex-col items-center justify-center min-h-[70vh] bg-[#fafafa] relative overflow-hidden">
         <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 text-center mt-16 mb-6 leading-tight">

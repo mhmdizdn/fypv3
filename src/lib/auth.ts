@@ -9,6 +9,7 @@ interface CustomUser {
   email: string;
   name: string;
   userType: string;
+  username?: string;
 }
 
 export const authOptions: NextAuthOptions = {
@@ -52,6 +53,7 @@ export const authOptions: NextAuthOptions = {
           email: account.email,
           name: 'name' in account ? account.name || account.username : account.username,
           userType,
+          username: account.username,
         } as CustomUser;
       }
     })
@@ -71,15 +73,19 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
         token.name = user.name;
         token.userType = (user as CustomUser).userType;
+        token.username = (user as any).username;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        (session.user as any).userType = token.userType;
+        if (session.user) {
+          (session.user as any).id = token.id as string;
+          (session.user as any).email = token.email as string;
+          (session.user as any).name = token.name as string;
+          (session.user as any).userType = token.userType;
+          (session.user as any).username = token.username;
+        }
       }
       return session;
     }

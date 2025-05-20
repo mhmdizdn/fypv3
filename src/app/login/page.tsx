@@ -15,9 +15,9 @@ function LoginPage() {
     if (status === "authenticated" && session) {
       const userType = (session.user as any).userType;
       if (userType === "serviceProvider") {
-        router.push("/dashboard/provider");
+        router.push("/provider/dashboard");
       } else {
-        router.push("/index");
+        router.push("/customer/index");
       }
     }
   }, [status, session, router]);
