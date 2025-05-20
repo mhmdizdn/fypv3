@@ -26,6 +26,10 @@ model ServiceProvider {
   email     String   @unique
   serviceType String
   password  String
+  phone     String?
+  latitude  Float?
+  longitude Float?
+  address   String?
   services  Service[]
 }
 
@@ -35,6 +39,7 @@ model Service {
   description String
   price       Float
   category    String
+  imageUrl    String?
   provider    ServiceProvider @relation(fields: [providerId], references: [id])
   providerId  Int
   createdAt   DateTime @default(now())

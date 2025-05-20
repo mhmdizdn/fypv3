@@ -16,6 +16,10 @@ export async function GET(req: Request) {
       email: true,
       username: true,
       serviceType: true,
+      phone: true,
+      latitude: true,
+      longitude: true,
+      address: true,
     },
   });
 
@@ -46,7 +50,19 @@ export async function PUT(req: Request) {
     name: data.name,
     username: data.username,
     serviceType: data.serviceType,
+    phone: data.phone,
   };
+
+  // Handle location data if provided
+  if (data.latitude !== undefined && data.longitude !== undefined) {
+    updateData.latitude = data.latitude;
+    updateData.longitude = data.longitude;
+  }
+
+  // Handle address if provided
+  if (data.address) {
+    updateData.address = data.address;
+  }
 
   // Handle email update
   if (data.email && data.email !== session.user.email) {
@@ -88,6 +104,10 @@ export async function PUT(req: Request) {
       email: true,
       username: true,
       serviceType: true,
+      phone: true,
+      latitude: true,
+      longitude: true,
+      address: true,
     },
   });
 

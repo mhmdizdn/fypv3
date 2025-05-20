@@ -5,69 +5,22 @@ import { Navbar } from '@/components/ui/navbar';
 import { useSearchParams } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 
-// Dummy data for home service providers
-const serviceProviders = [
-  {
-    id: 1,
-    name: 'Sparkle Home Cleaning',
-    category: 'Cleaning',
-    rating: 5.0,
-    reviews: 12,
-    price: 'RM50.00',
-    status: 'Closed until Wed 10:00',
-    image: '/service-cleaning.jpg',
-  },
-  {
-    id: 2,
-    name: 'HandyFix Plumbing',
-    category: 'Plumbing',
-    rating: 5.0,
-    reviews: 8,
-    price: 'RM80.00',
-    status: 'Closed until Wed 07:00',
-    image: '/service-plumbing.jpg',
-  },
-  {
-    id: 3,
-    name: 'CoolBreeze Aircon Service',
-    category: 'Air Conditioning',
-    rating: 5.0,
-    reviews: 28,
-    price: 'RM120.00',
-    status: 'Closed until Wed 11:00',
-    image: '/service-aircon.jpg',
-  },
-  {
-    id: 4,
-    name: 'LaundryPro',
-    category: 'Laundry',
-    rating: 5.0,
-    reviews: 15,
-    price: 'RM30.00',
-    status: 'Closed until Wed 10:00',
-    image: '/service-laundry.jpg',
-  },
-  {
-    id: 5,
-    name: 'Bright Tutors',
-    category: 'Tutoring',
-    rating: 5.0,
-    reviews: 20,
-    price: 'RM40.00',
-    status: 'Closed until Wed 13:30',
-    image: '/service-tutoring.jpg',
-  },
-  {
-    id: 6,
-    name: 'GardenCare',
-    category: 'Gardening',
-    rating: 5.0,
-    reviews: 10,
-    price: 'RM60.00',
-    status: 'Closed until Wed 11:30',
-    image: '/service-gardening.jpg',
-  },
-];
+interface Service {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  imageUrl: string | null;
+  providerId: number;
+  provider: {
+    id: number;
+    name: string | null;
+    serviceType: string;
+    latitude?: number;
+    longitude?: number;
+  };
+}
 
 function ServiceNavbar() {
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
@@ -150,21 +103,104 @@ function ServiceNavbar() {
 }
 
 export default function ServiceRecommendationPage() {
-  const [sort, setSort] = useState('relevance');
+  const [sort, setSort] = useState('nearby');
   const [quickFilter, setQuickFilter] = useState('');
   const [offers, setOffers] = useState<{vouchers: boolean, deals: boolean}>({vouchers: false, deals: false});
   const [search, setSearch] = useState('');
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [userCoordinates, setUserCoordinates] = useState<{lat: number, lng: number} | null>(null);
+  
+  const searchParams = useSearchParams();
+  
+  // Get location coordinates from URL
+  useEffect(() => {
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    
+    if (lat && lng) {
+      setUserCoordinates({
+        lat: parseFloat(lat),
+        lng: parseFloat(lng)
+      });
+    }
+  }, [searchParams]);
 
-  // Filter and sort logic (simple for mockup)
-  let filteredProviders = serviceProviders.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.category.toLowerCase().includes(search.toLowerCase())
-  );
-  if (quickFilter === 'top') filteredProviders = filteredProviders.filter(p => p.rating >= 5);
-  if (quickFilter === '4+') filteredProviders = filteredProviders.filter(p => p.rating >= 4);
-  if (offers.vouchers) filteredProviders = filteredProviders.filter(p => p.id % 2 === 0); // Dummy logic
-  if (offers.deals) filteredProviders = filteredProviders.filter(p => p.id % 2 === 1); // Dummy logic
-  if (sort === 'rating') filteredProviders = [...filteredProviders].sort((a, b) => b.rating - a.rating);
+  // Fetch services from the API
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/services');
+        if (response.ok) {
+          const data = await response.json();
+          setServices(data.services || []);
+        } else {
+          console.error('Failed to fetch services');
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, []);
+
+  // Calculate distance between two coordinates in kilometers
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return Infinity;
+    
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const distance = R * c; // Distance in km
+    return distance;
+  };
+
+  // Filter and sort logic
+  const filteredServices = services.filter(service =>
+    service.name.toLowerCase().includes(search.toLowerCase()) ||
+    service.category.toLowerCase().includes(search.toLowerCase()) ||
+    (service.provider.name && service.provider.name.toLowerCase().includes(search.toLowerCase())) ||
+    service.provider.serviceType.toLowerCase().includes(search.toLowerCase())
+  ).sort((a, b) => {
+    if (sort === 'price-high') {
+      return b.price - a.price;
+    } else if (sort === 'price-low') {
+      return a.price - b.price;
+    } else if (sort === 'nearby' && userCoordinates) {
+      // Get provider coordinates
+      const aLat = a.provider.latitude || 0;
+      const aLng = a.provider.longitude || 0;
+      const bLat = b.provider.latitude || 0;
+      const bLng = b.provider.longitude || 0;
+      
+      // Calculate distances
+      const distanceA = calculateDistance(
+        userCoordinates.lat, 
+        userCoordinates.lng, 
+        aLat, 
+        aLng
+      );
+      
+      const distanceB = calculateDistance(
+        userCoordinates.lat, 
+        userCoordinates.lng, 
+        bLat, 
+        bLng
+      );
+      
+      return distanceA - distanceB;
+    }
+    return 0; // Default sorting (no change)
+  });
 
   return (
     <>
@@ -177,16 +213,13 @@ export default function ServiceRecommendationPage() {
             <div className="font-semibold mb-2">Sort by</div>
             <div className="flex flex-col gap-2">
               <label className="flex items-center gap-2">
-                <input type="radio" name="sort" checked={sort === 'relevance'} onChange={() => setSort('relevance')} /> Relevance
+                <input type="radio" name="sort" checked={sort === 'nearby'} onChange={() => setSort('nearby')} /> Nearby
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" name="sort" checked={sort === 'fastest'} onChange={() => setSort('fastest')} /> Fastest delivery
+                <input type="radio" name="sort" checked={sort === 'price-high'} onChange={() => setSort('price-high')} /> Price (high to low)
               </label>
               <label className="flex items-center gap-2">
-                <input type="radio" name="sort" checked={sort === 'distance'} onChange={() => setSort('distance')} /> Distance
-              </label>
-              <label className="flex items-center gap-2">
-                <input type="radio" name="sort" checked={sort === 'rating'} onChange={() => setSort('rating')} /> Top rated
+                <input type="radio" name="sort" checked={sort === 'price-low'} onChange={() => setSort('price-low')} /> Price (low to high)
               </label>
             </div>
           </div>
@@ -200,25 +233,6 @@ export default function ServiceRecommendationPage() {
               <button className={`px-3 py-1 rounded-full border ${quickFilter === '4+' ? 'bg-[#fff] text-[#19E6A7] border-[#19E6A7]' : 'bg-white text-gray-700'}`} onClick={() => setQuickFilter(quickFilter === '4+' ? '' : '4+')}>Ratings 4+</button>
             </div>
           </div>
-          <div className="mb-6">
-            <div className="font-semibold mb-2">Offers</div>
-            <label className="flex items-center gap-2 mb-2">
-              <input type="checkbox" checked={offers.vouchers} onChange={e => setOffers(o => ({...o, vouchers: e.target.checked}))} /> Accepts vouchers
-            </label>
-            <label className="flex items-center gap-2">
-              <input type="checkbox" checked={offers.deals} onChange={e => setOffers(o => ({...o, deals: e.target.checked}))} /> Deals
-            </label>
-          </div>
-          <div className="mb-6">
-            <div className="font-semibold mb-2">Service Type</div>
-            <input
-              type="text"
-              placeholder="Search for service type"
-              className="w-full px-3 py-2 rounded border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#19E6A7]"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-          </div>
         </aside>
         {/* Main Content */}
         <main className="flex-1 p-6">
@@ -231,40 +245,59 @@ export default function ServiceRecommendationPage() {
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <h1 className="text-5xl font-extrabold mb-8">Closed for now</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProviders.map(provider => (
-              <div key={provider.id} className="bg-white rounded-xl shadow-md overflow-hidden relative flex flex-col">
-                <div className="relative h-48 w-full overflow-hidden">
-                  <img src={provider.image} alt={provider.name} className="object-cover w-full h-full" />
-                  <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center">
-                    <span className="text-white font-bold text-lg mb-2">{provider.status}</span>
-                    <button className="bg-[#E91E63] text-white px-4 py-2 rounded font-semibold">Book for later</button>
+
+          {loading ? (
+            <div className="text-center py-10">
+              <div className="w-12 h-12 border-4 border-[#19E6A7] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading services...</p>
+            </div>
+          ) : (
+            <>
+              {/* Service Providers */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredServices.map(service => (
+                  <div key={service.id} className="bg-white rounded-xl shadow-md overflow-hidden relative flex flex-col">
+                    <div className="relative h-48 w-full overflow-hidden">
+                      {service.imageUrl ? (
+                        <img 
+                          src={service.imageUrl} 
+                          alt={service.name} 
+                          className="object-cover w-full h-full" 
+                        />
+                      ) : (
+                        <div className="bg-gray-200 w-full h-full flex items-center justify-center">
+                          <span className="text-gray-500">{service.name}</span>
+                        </div>
+                      )}
+
+                      <button className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:bg-[#19E6A7] transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-[#E91E63]">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5.318 6.318a4.5 4.5 0 016.364 0l.318.318.318-.318a4.5 4.5 0 116.364 6.364L12 21.364l-6.682-6.682a4.5 4.5 0 010-6.364z" />
+                        </svg>
+                      </button>
+                    </div>
+                    <div className="p-4 flex-1 flex flex-col">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-lg line-clamp-1">{service.name}</span>
+                        <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" className="w-4 h-4"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.382 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.382-2.454a1 1 0 00-1.176 0l-3.382 2.454c-.784.57-1.838-.196-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
+                          5.0 <span className="text-gray-500 font-normal">({Math.floor(Math.random() * 20) + 5})</span>
+                        </span>
+                      </div>
+                      <div className="text-gray-500 text-sm mb-1">{service.category}</div>
+                      <div className="text-gray-700 text-sm mb-2">Provider: {service.provider.name || 'Unknown'}</div>
+                      <div className="line-clamp-2 text-sm text-gray-600 mb-2">{service.description}</div>
+                      <div className="flex items-center justify-between mt-auto">
+                        <span className="font-semibold text-[#19E6A7]">RM {service.price.toFixed(2)}</span>
+                      </div>
+                    </div>
                   </div>
-                  <button className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:bg-[#19E6A7] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-[#E91E63]">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5.318 6.318a4.5 4.5 0 016.364 0l.318.318.318-.318a4.5 4.5 0 116.364 6.364L12 21.364l-6.682-6.682a4.5 4.5 0 010-6.364z" />
-                    </svg>
-                  </button>
-                </div>
-                <div className="p-4 flex-1 flex flex-col">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-lg line-clamp-1">{provider.name}</span>
-                    <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" className="w-4 h-4"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.382 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.382-2.454a1 1 0 00-1.176 0l-3.382 2.454c-.784.57-1.838-.196-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                      {provider.rating} <span className="text-gray-500 font-normal">({provider.reviews})</span>
-                    </span>
-                  </div>
-                  <div className="text-gray-500 text-sm mb-2">{provider.category}</div>
-                  <div className="flex items-center justify-between mt-auto">
-                    <span className="font-semibold text-[#19E6A7]">{provider.price}</span>
-                  </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-          {filteredProviders.length === 0 && (
-            <div className="text-center text-gray-500 mt-12 text-lg">No service providers found for your search/filter.</div>
+              {filteredServices.length === 0 && (
+                <div className="text-center text-gray-500 mt-12 text-lg">No services found for your search/filter.</div>
+              )}
+            </>
           )}
         </main>
       </div>

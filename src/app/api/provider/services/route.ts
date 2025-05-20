@@ -2,6 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { saveFile } from "@/lib/upload";
+import { mkdir, stat } from 'fs/promises';
+import { join } from 'path';
 
 // GET /api/provider/services - Get all services for the logged-in provider
 export async function GET() {
@@ -49,8 +52,21 @@ export async function POST(req: Request) {
             );
         }
 
-        const body = await req.json();
-        const { name, description, price, category } = body;
+        // Ensure uploads directory exists
+        const uploadsDir = join(process.cwd(), 'public', 'uploads');
+        try {
+            await stat(uploadsDir);
+        } catch (e) {
+            await mkdir(uploadsDir, { recursive: true });
+        }
+
+        // Parse the multipart form data
+        const formData = await req.formData();
+        const name = formData.get('name') as string;
+        const description = formData.get('description') as string;
+        const price = formData.get('price') as string;
+        const category = formData.get('category') as string;
+        const image = formData.get('image') as File | null;
 
         // Validate required fields
         if (!name || !description || !price || !category) {
@@ -71,6 +87,12 @@ export async function POST(req: Request) {
             );
         }
 
+        // Handle image upload if present
+        let imageUrl = null;
+        if (image && image.size > 0) {
+            imageUrl = await saveFile(image);
+        }
+
         // Create new service
         const service = await prisma.service.create({
             data: {
@@ -78,6 +100,7 @@ export async function POST(req: Request) {
                 description,
                 price: parseFloat(price),
                 category,
+                imageUrl,
                 providerId: provider.id
             }
         });

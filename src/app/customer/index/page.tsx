@@ -75,12 +75,12 @@ export default function IndexPage() {
         // Create new map
         googleMapRef.current = new window.google.maps.Map(mapRef.current, {
           center: userLocation,
-          zoom: 16,
-          mapId: 'DEMO_MAP_ID', // Optional: Use a custom map style ID if you have one
+          zoom: 15,
+          mapId: 'DEMO_MAP_ID',
           disableDefaultUI: false,
           zoomControl: true,
           mapTypeControl: true,
-          streetViewControl: false,
+          streetViewControl: true,
           fullscreenControl: true,
         });
 
@@ -303,31 +303,6 @@ export default function IndexPage() {
         }
       }
       
-      // If Nominatim fails, try a fallback method - BigDataCloud reverse geocoding (free tier)
-      const fallbackUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`;
-      const fallbackResponse = await fetch(fallbackUrl);
-      
-      if (fallbackResponse.ok) {
-        const fallbackData = await fallbackResponse.json();
-        if (fallbackData) {
-          // Format address from BigDataCloud response
-          const formattedAddress = [
-            fallbackData.locality,
-            fallbackData.city,
-            fallbackData.principalSubdivision,
-            fallbackData.postcode,
-            fallbackData.countryName
-          ].filter(Boolean).join(", ");
-          
-          if (formattedAddress) {
-            setAddress(formattedAddress);
-            setAddressOptions([formattedAddress]);
-            setMapError(null);
-            return;
-          }
-        }
-      }
-      
       // Last resort - use coordinates
       setAddress(`Latitude: ${lat.toFixed(6)}, Longitude: ${lng.toFixed(6)}`);
       
@@ -350,7 +325,7 @@ export default function IndexPage() {
     const addr = data.address;
     const components = [];
     
-    // POI or building name first
+    // Building or place name
     if (addr.building || addr.amenity || addr.shop) {
       components.push(addr.building || addr.amenity || addr.shop);
     }
@@ -361,9 +336,9 @@ export default function IndexPage() {
       components.push(roadPart);
     }
     
-    // Neighborhood info
-    if (addr.suburb || addr.neighbourhood || addr.city_district) {
-      components.push(addr.suburb || addr.neighbourhood || addr.city_district);
+    // Neighborhood
+    if (addr.suburb || addr.neighbourhood) {
+      components.push(addr.suburb || addr.neighbourhood);
     }
     
     // City, state, postal code
