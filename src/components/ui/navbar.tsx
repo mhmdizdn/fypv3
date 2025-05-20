@@ -23,8 +23,8 @@ export function Navbar() {
 
       {/* Right: Auth & CTA */}
       <div className="flex items-center gap-3">
-        <Link href="/login" className="text-white text-sm font-medium hover:text-[#19E6A7] transition-colors">Login</Link>
-        <Button asChild className="bg-[#19E6A7] text-black font-semibold hover:bg-[#13c18d] px-5 py-2 rounded-md text-sm shadow-none">
+      <Link href="/login" className="text-white text-sm font-medium hover:text-[#19E6A7] transition-colors">Login</Link>
+        <Button asChild variant="gradient" size="sm">
           <Link href="/register">Become a Provider</Link>
         </Button>
       </div>

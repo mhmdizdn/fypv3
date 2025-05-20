@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { signOut, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 // Define type for Google Maps
 declare global {
@@ -516,12 +517,9 @@ export default function IndexPage() {
                 </>
               )}
             </button>
-            <button
-              type="submit"
-              className="px-6 py-3 bg-[#19E6A7] text-white rounded-lg font-bold text-lg hover:bg-[#13c18c] transition-colors"
-            >
-              Find services
-            </button>
+            <Button variant="gradient" className="px-6 py-3 rounded-lg font-bold text-lg">
+              View Services
+            </Button>
           </div>
           
           {mapError && (

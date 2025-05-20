@@ -1,6 +1,7 @@
 'use client';
 import { useSession, signOut } from 'next-auth/react';
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
 
 export default function UserProfilePage() {
   const { data: session } = useSession();
@@ -213,13 +214,14 @@ export default function UserProfilePage() {
           </div>
         </div>
         
-        <button
-          className="mt-6 px-4 py-2 rounded bg-[#19E6A7] text-white font-semibold disabled:opacity-50"
+        <Button
+          variant="gradient"
           onClick={handleSave}
           disabled={saving}
+          className="mt-6"
         >
           {saving ? 'Saving...' : 'Save Changes'}
-        </button>
+        </Button>
       </div>
     </>
   );

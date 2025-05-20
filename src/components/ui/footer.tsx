@@ -14,7 +14,7 @@ export function Footer() {
           </div>
           <div className="mb-2 text-xl font-semibold">Discover</div>
           <ul className="space-y-1 font-bold">
-            <li><a href="#" className="hover:underline">Become a Tasker</a></li>
+            <li><a href="/register" className="hover:underline">Become a Tasker</a></li>
             <li><a href="#" className="hover:underline">Help</a></li>
           </ul>
         </div>

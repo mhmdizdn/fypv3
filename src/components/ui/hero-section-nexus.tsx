@@ -4,7 +4,12 @@ import { motion } from 'framer-motion';
 import { Button } from './button';
 import { useState, useEffect } from 'react';
 
-export function HeroSectionNexus() {
+interface HeroSectionNexusProps {
+  onGetStartedClick?: () => void;
+  onLearnMoreClick?: () => void;
+}
+
+export function HeroSectionNexus({ onGetStartedClick, onLearnMoreClick }: HeroSectionNexusProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<{x: number, y: number, opacity: number}[]>([]);
   const [isClient, setIsClient] = useState(false);
@@ -79,6 +84,7 @@ export function HeroSectionNexus() {
                 variant="gradient"
                 size="xl"
                 className="px-8 py-6"
+                onClick={onGetStartedClick}
               >
                 Get Started
               </Button>
@@ -91,6 +97,7 @@ export function HeroSectionNexus() {
                 variant="outline"
                 size="xl"
                 className="border-white/20 text-black hover:bg-white/10 px-8 py-6"
+                onClick={onLearnMoreClick}
               >
                 Learn More
               </Button>

@@ -10,7 +10,10 @@ export async function GET() {
                     select: {
                         id: true,
                         name: true,
+                        username: true,
+                        email: true,
                         serviceType: true,
+                        phone: true,
                         latitude: true,
                         longitude: true,
                         address: true

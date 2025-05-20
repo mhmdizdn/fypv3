@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import { Button } from "@/components/ui/button";
 
 // Define Google Maps type
 declare global {
@@ -543,13 +544,13 @@ export default function ProviderProfilePage() {
                   </div>
                   
                   <div className="flex justify-end">
-                    <button
+                    <Button
                       type="submit"
                       disabled={isSaving}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+                      variant="gradient"
                     >
                       {isSaving ? 'Saving...' : 'Save Changes'}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
@@ -598,31 +599,33 @@ export default function ProviderProfilePage() {
                   </div>
                   
                   <div className="flex justify-end">
-                    <button
+                    <Button
                       type="submit"
                       disabled={isSaving}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+                      variant="gradient"
                     >
                       {isSaving ? 'Updating...' : 'Update Password'}
-                    </button>
+                    </Button>
                   </div>
                 </form>
               </div>
               
               <div className="bg-white rounded-lg shadow-md p-6 mt-6">
                 <h2 className="text-xl font-semibold mb-4">Account Actions</h2>
-                <button
+                <Button
                   onClick={() => router.push('/provider/dashboard')}
-                  className="w-full mb-2 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                  variant="outline"
+                  className="w-full mb-2"
                 >
                   Return to Dashboard
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleLogout}
-                  className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  variant="danger"
+                  className="w-full"
                 >
                   Logout
-                </button>
+                </Button>
               </div>
             </div>
           </div>

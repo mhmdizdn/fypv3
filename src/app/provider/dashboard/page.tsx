@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
+import { Button } from "@/components/ui/button";
 
 interface Service {
   id: number;
@@ -281,12 +282,13 @@ export default function ProviderDashboard() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Provider Dashboard</h1>
-          <button
+          <Button
             onClick={() => setShowAddService(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+            variant="gradient"
+            size="lg"
           >
             Add New Service
-          </button>
+          </Button>
         </div>
 
         {/* Add Service Modal */}
@@ -354,22 +356,22 @@ export default function ProviderDashboard() {
                   )}
                 </div>
                 <div className="flex justify-end gap-4">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setShowAddService(false);
                       setImagePreview(null);
                     }}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                    variant="outline"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    variant="gradient"
                   >
                     Add Service
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -441,22 +443,22 @@ export default function ProviderDashboard() {
                   )}
                 </div>
                 <div className="flex justify-end gap-4">
-                  <button
+                  <Button
                     type="button"
                     onClick={() => {
                       setShowEditService(false);
                       setEditImagePreview(null);
                     }}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                    variant="outline"
                   >
                     Cancel
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="submit"
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    variant="gradient"
                   >
                     Save Changes
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -470,18 +472,18 @@ export default function ProviderDashboard() {
               <h2 className="text-2xl font-bold mb-4">Delete Service</h2>
               <p className="mb-6">Are you sure you want to delete the service "{currentService.name}"? This action cannot be undone.</p>
               <div className="flex justify-end gap-4">
-                <button
+                <Button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  variant="outline"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleDeleteService}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                  variant="danger"
                 >
                   Delete
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -508,18 +510,20 @@ export default function ProviderDashboard() {
                   <span className="text-gray-500">{service.category}</span>
                 </div>
                 <div className="flex justify-end gap-2">
-                  <button
+                  <Button
                     onClick={() => openEditModal(service)}
-                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    variant="gradient"
+                    size="sm"
                   >
                     Edit
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => openDeleteConfirmation(service)}
-                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                    variant="danger"
+                    size="sm"
                   >
                     Delete
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
