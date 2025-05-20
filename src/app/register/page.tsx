@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -50,8 +51,24 @@ export default function RegisterPage() {
         throw new Error(data.message || "Registration failed");
       }
 
-      // Successful registration
-      router.push("/customer/index"); // Redirect to user index page
+      // Sign in user immediately after registration
+      const signInResult = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+        userType,
+      });
+
+      if (signInResult?.ok) {
+        // Redirect based on user type
+        if (userType === "serviceProvider") {
+          router.push("/provider/dashboard");
+        } else {
+          router.push("/customer/index");
+        }
+      } else {
+        throw new Error(signInResult?.error || "Login failed after registration");
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {

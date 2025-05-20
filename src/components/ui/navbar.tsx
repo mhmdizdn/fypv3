@@ -21,35 +21,6 @@ export function Navbar() {
         </span>
       </div>
 
-      {/* Center: Navigation Links */}
-      <div className="hidden md:flex items-center gap-6 text-white text-sm font-medium">
-        <Link href="#" className="hover:text-[#19E6A7] transition-colors">Product</Link>
-        <Link href="#" className="hover:text-[#19E6A7] transition-colors">Customers</Link>
-        <div className="relative group">
-          <button className="flex items-center gap-1 hover:text-[#19E6A7] transition-colors">
-            Channels
-            <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-          {/* Dropdown (hidden by default) */}
-          <div className="absolute left-0 mt-2 min-w-[140px] bg-[#181818] rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-20">
-            <Link href="#" className="block px-4 py-2 hover:bg-[#222]">Channel 1</Link>
-            <Link href="#" className="block px-4 py-2 hover:bg-[#222]">Channel 2</Link>
-          </div>
-        </div>
-        <div className="relative group">
-          <button className="flex items-center gap-1 hover:text-[#19E6A7] transition-colors">
-            Resources
-            <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-          <div className="absolute left-0 mt-2 min-w-[140px] bg-[#181818] rounded shadow-lg opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-20">
-            <Link href="#" className="block px-4 py-2 hover:bg-[#222]">Blog</Link>
-            <Link href="#" className="block px-4 py-2 hover:bg-[#222]">Guides</Link>
-          </div>
-        </div>
-        <Link href="#" className="hover:text-[#19E6A7] transition-colors">Docs</Link>
-        <Link href="#" className="hover:text-[#19E6A7] transition-colors">Pricing</Link>
-      </div>
-
       {/* Right: Auth & CTA */}
       <div className="flex items-center gap-3">
         <Link href="/login" className="text-white text-sm font-medium hover:text-[#19E6A7] transition-colors">Login</Link>

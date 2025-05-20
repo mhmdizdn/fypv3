@@ -7,16 +7,19 @@ import { useState, useEffect } from 'react';
 export function HeroSectionNexus() {
   const [isHovered, setIsHovered] = useState(false);
   const [particles, setParticles] = useState<{x: number, y: number, opacity: number}[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const arr = Array.from({ length: 20 }, () => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        opacity: Math.random() * 0.5,
-      }));
-      setParticles(arr);
-    }
+    // Set isClient to true once component mounts on client
+    setIsClient(true);
+    
+    // Generate particles only on client-side
+    const arr = Array.from({ length: 20 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      opacity: Math.random() * 0.5,
+    }));
+    setParticles(arr);
   }, []);
 
   return (
@@ -56,7 +59,7 @@ export function HeroSectionNexus() {
               backgroundSize: '200% auto',
             }}
           >
-            Bringing Helpers to Your Doorstep.
+            Bringing Services to Your Doorstep.
           </motion.h1>
           <motion.p 
             className="text-xl md:text-2xl text-gray-300 mb-12"
@@ -99,29 +102,37 @@ export function HeroSectionNexus() {
       {/* Decorative Elements */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
       
-      {/* Animated Particles */}
-      <div className="absolute inset-0 pointer-events-none">
-        {particles.map((p, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full"
-            initial={{
-              x: p.x,
-              y: p.y,
-              opacity: p.opacity,
-            }}
-            animate={{
-              y: [null, Math.random() * window.innerHeight],
-              opacity: [null, Math.random() * 0.5],
-            }}
-            transition={{
-              duration: Math.random() * 10 + 10,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          />
-        ))}
-      </div>
+      {/* Animated Particles - Only render on client side */}
+      {isClient && (
+        <div className="absolute inset-0 pointer-events-none">
+          {particles.map((p, i) => {
+            // Pre-compute random values to ensure consistency
+            const endY = p.y + 300;
+            const endOpacity = p.opacity - 0.2;
+            
+            return (
+              <motion.div
+                key={i}
+                className="absolute w-1 h-1 bg-white rounded-full"
+                initial={{
+                  x: p.x,
+                  y: p.y,
+                  opacity: p.opacity,
+                }}
+                animate={{
+                  y: [null, endY],
+                  opacity: [null, endOpacity],
+                }}
+                transition={{
+                  duration: 10 + (i % 10),
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
-} 
+}
