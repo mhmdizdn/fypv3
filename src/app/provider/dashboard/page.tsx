@@ -237,7 +237,7 @@ export default function ProviderDashboard() {
             />
           </div>
           <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
-            Service<span className="text-[#19E6A7]">Finder</span>
+            Service<span className="text-[#7919e6]">Finder</span>
           </span>
         </div>
         {/* Center: Service Type */}

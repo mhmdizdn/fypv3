@@ -432,12 +432,12 @@ export default function IndexPage() {
           />
         </div>
         <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
-          Service<span className="text-[#19E6A7]">Finder</span>
+          Service<span className="text-[#7919e6]">Finder</span>
         </span>
       </div>
       {/* Right: User, Cart, Settings */}
       <div className="flex items-center gap-6 text-gray-700 text-base">
-        <div className="flex items-center gap-1 cursor-pointer">
+        <div className="flex items-center gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
@@ -445,14 +445,14 @@ export default function IndexPage() {
 
         </div>
         {/* Cart Button */}
-        <button className="hover:text-[#E91E63] flex items-center" aria-label="Cart">
+        <button className="hover:text-[#E91E63] cursor-pointer flex items-center" aria-label="Cart">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.6M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
           </svg>
         </button>
         <div className="relative">
           <button
-            className="hover:text-[#E91E63] flex items-center"
+            className="hover:text-[#E91E63] cursor-pointer flex items-center"
             onClick={() => setShowSettings((s) => !s)}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -483,7 +483,7 @@ export default function IndexPage() {
           <div className="flex flex-col md:flex-row items-center gap-4">
               <textarea
                 placeholder="Enter your location or address"
-                className="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#19E6A7] text-lg resize-none overflow-hidden"
+                className="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7919e6] text-lg resize-none overflow-hidden"
                 value={address}
                 onChange={e => {
                   setAddress(e.target.value);
@@ -495,13 +495,13 @@ export default function IndexPage() {
               />
             <button
               type="button"
-              className="flex items-center gap-2 px-4 py-3 bg-white border border-[#19E6A7] text-[#19E6A7] rounded-lg font-semibold hover:bg-[#e6fcf5] transition-colors disabled:opacity-50"
+              className="flex cursor-pointer items-center gap-2 px-4 py-3 bg-white border border-[#7919e6] text-[#7919e6] rounded-lg font-semibold hover:bg-[#e6fcf5] transition-colors disabled:opacity-50"
               onClick={handleLocateMe}
               disabled={locating}
             >
               {locating ? (
                 <>
-                  <svg className="animate-spin h-5 w-5 text-[#19E6A7]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-5 w-5 text-[#7919e6]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -509,15 +509,15 @@ export default function IndexPage() {
                 </>
               ) : (
                 <>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 ">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
               </svg>
               Locate me
                 </>
               )}
             </button>
-            <Button variant="gradient" className="px-6 py-3 rounded-lg font-bold text-lg">
+            <Button variant="gradient" className="px-6 py-3 rounded-lg cursor-pointer font-bold text-lg">
               View Services
             </Button>
           </div>

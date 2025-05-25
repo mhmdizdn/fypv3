@@ -57,12 +57,12 @@ function ServiceNavbar() {
           />
         </div>
         <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
-          Service<span className="text-[#19E6A7]">Finder</span>
+          Service<span className="text-[#7919e6]">Finder</span>
         </span>
       </div>
       {/* Center: Address */}
       <div className="hidden md:flex items-center gap-2 text-white text-lg font-medium">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-[#111]">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="gray" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-[#111]">
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 21c-4.418 0-8-4.03-8-9a8 8 0 1116 0c0 4.97-3.582 9-8 9z" />
           <circle cx="12" cy="12" r="3" fill="#E91E63" />
         </svg>
@@ -70,21 +70,21 @@ function ServiceNavbar() {
       </div>
       {/* Right: User, Cart, Settings */}
       <div className="flex items-center gap-6 text-gray-700 text-base">
-        <div className="flex items-center gap-1 cursor-pointer">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+        <div className="flex items-center gap-1 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span>{userName}</span>
         </div>
         {/* Cart Button */}
-        <button className="hover:text-[#E91E63] flex items-center" aria-label="Cart">
+        <button className="hover:text-[#E91E63] cursor-pointer flex items-center text-white"  aria-label="Cart">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.6M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
           </svg>
         </button>
-        <div className="relative">
+        <div className="relative ">
           <button
-            className="hover:text-[#E91E63] flex items-center"
+            className="hover:text-[#E91E63] cursor-pointer flex items-center text-white"
             onClick={() => setShowSettings((s) => !s)}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -253,7 +253,7 @@ export default function ServiceRecommendationPage() {
       <ServiceNavbar />
       <div className="flex min-h-screen bg-[#fafafa]">
         {/* Sidebar Filters */}
-        <aside className="w-80 bg-white border-r border-gray-200 p-6 hidden md:block">
+        <aside className="w-60 bg-white border-r border-gray-200 p-6 hidden md:block">
           <h2 className="text-2xl font-bold mb-6">Filters</h2>
           <div className="mb-6">
             <div className="font-semibold mb-2">Sort by</div>
@@ -269,16 +269,6 @@ export default function ServiceRecommendationPage() {
               </label>
             </div>
           </div>
-          <div className="mb-6">
-            <div className="font-semibold mb-2">Quick filters</div>
-            <div className="flex flex-col gap-2">
-              <button className={`px-3 py-1 rounded-full border flex items-center gap-2 ${quickFilter === 'top' ? 'bg-[#19E6A7] text-white' : 'bg-white text-gray-700'}`} onClick={() => setQuickFilter(quickFilter === 'top' ? '' : 'top')}>
-                <span className="inline-block"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M16.24 7.76a6 6 0 11-8.49 0M12 3v9" /></svg></span>
-                Top provider
-              </button>
-              <button className={`px-3 py-1 rounded-full border ${quickFilter === '4+' ? 'bg-[#fff] text-[#19E6A7] border-[#19E6A7]' : 'bg-white text-gray-700'}`} onClick={() => setQuickFilter(quickFilter === '4+' ? '' : '4+')}>Ratings 4+</button>
-            </div>
-          </div>
         </aside>
         {/* Main Content */}
         <main className="flex-1 p-6">
@@ -286,7 +276,7 @@ export default function ServiceRecommendationPage() {
             <input
               type="text"
               placeholder="Search for services, providers, and categories"
-              className="w-full max-w-3xl px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#19E6A7] text-lg shadow-sm"
+              className="w-full max-w-3xl px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7919e6] text-lg shadow-sm"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -294,7 +284,7 @@ export default function ServiceRecommendationPage() {
 
           {loading ? (
             <div className="text-center py-10">
-              <div className="w-12 h-12 border-4 border-[#19E6A7] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <div className="w-12 h-12 border-4 border-[#7919e6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
               <p className="text-gray-600">Loading services...</p>
             </div>
           ) : (
@@ -321,7 +311,7 @@ export default function ServiceRecommendationPage() {
                       )}
 
                       <button 
-                        className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:bg-[#19E6A7] transition-colors"
+                        className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:bg-[#7919e6] transition-colors"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent opening the detail modal
                           // Favorite functionality could be added here
@@ -335,10 +325,10 @@ export default function ServiceRecommendationPage() {
                     <div className="p-4 flex-1 flex flex-col">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-bold text-lg line-clamp-1">{service.name}</span>
-                        <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
+                        {/* <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
                           <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" className="w-4 h-4"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.382 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.382-2.454a1 1 0 00-1.176 0l-3.382 2.454c-.784.57-1.838-.196-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
                           5.0 <span className="text-gray-500 font-normal">({Math.floor(Math.random() * 20) + 5})</span>
-                        </span>
+                        </span> */}
                       </div>
                       <div className="text-gray-500 text-sm mb-1">{service.category}</div>
                       <div className="text-gray-700 text-sm mb-2">Provider: {service.provider.name || 'Unknown'}</div>
@@ -385,7 +375,7 @@ export default function ServiceRecommendationPage() {
             <div className="flex justify-end p-4">
               <button 
                 onClick={closeServiceDetails} 
-                className="bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors"
+                className="bg-gray-100 cursor-pointer p-2 rounded-full hover:bg-gray-200 transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -414,10 +404,10 @@ export default function ServiceRecommendationPage() {
                 <div className="lg:col-span-2">
                   <div className="flex items-center gap-3 mb-4">
                     <h2 className="text-2xl font-bold">{selectedService.name}</h2>
-                    <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
+                    {/* <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.382 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.382-2.454a1 1 0 00-1.176 0l-3.382 2.454c-.784.57-1.838-.196-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
                       5.0 <span className="text-gray-500 font-normal">({Math.floor(Math.random() * 20) + 5} reviews)</span>
-                    </span>
+                    </span> */}
                   </div>
                   
                   <div className="mb-6">
@@ -437,7 +427,7 @@ export default function ServiceRecommendationPage() {
                     {selectedService.createdAt && (
                       <div>
                         <div className="text-gray-500 text-sm">Listed Since</div>
-                        <div>{new Date(selectedService.createdAt).toLocaleDateString()}</div>
+                        <div>{new Date(selectedService.createdAt).toLocaleDateString('en-GB')}</div>
                       </div>
                     )}
                     {getDistanceText(selectedService) && (
@@ -460,7 +450,7 @@ export default function ServiceRecommendationPage() {
                   <h3 className="text-lg font-semibold mb-3">Service Provider</h3>
                   
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-[#19E6A7] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 bg-[#7919e6] rounded-full flex items-center justify-center text-white font-bold text-lg">
                       {selectedService.provider.name ? selectedService.provider.name.charAt(0).toUpperCase() : 'P'}
                     </div>
                     <div>
@@ -508,7 +498,10 @@ export default function ServiceRecommendationPage() {
                     )}
                   </div>
                   
-                  <div className="mt-6 flex flex-col gap-2">                    <Button variant="gradient" className="w-full">                      Contact Provider                    </Button>                    <Button variant="outline" className="w-full border-[#19E6A7] text-[#19E6A7] hover:bg-[#f0fdf9]">                      Book Service                    </Button>                  </div>
+                  <div className="mt-6 flex flex-col gap-2">                    
+                    <Button variant="gradient" className="w-full cursor-pointer">Contact Provider</Button>                    
+                    <Button variant="outline" className="w-full cursor-pointer border-[#7919e6] text-[#7919e6] hover:bg-[#f0fdf9]">Book Service</Button>
+                  </div>
                 </div>
               </div>
             </div>

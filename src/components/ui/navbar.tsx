@@ -16,14 +16,12 @@ export function Navbar() {
             priority
           />
         </div>
-        <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
-          Service<span className="text-[#19E6A7]">Finder</span>
-        </span>
+                <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>          Service<span className="text-[#7919e6]">Finder</span>        </span>
       </div>
 
       {/* Right: Auth & CTA */}
       <div className="flex items-center gap-3">
-      <Link href="/login" className="text-white text-sm font-medium hover:text-[#19E6A7] transition-colors">Login</Link>
+      <Link href="/login" className="text-white text-sm font-medium hover:text-[#7919e6] transition-colors">Login</Link>
         <Button asChild variant="gradient" size="sm">
           <Link href="/register">Become a Provider</Link>
         </Button>

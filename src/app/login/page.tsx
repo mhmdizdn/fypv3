@@ -47,7 +47,12 @@ function LoginPage() {
         throw new Error(result?.error || "Authentication failed");
       }
 
-      // The useEffect hook will handle the redirect based on the session
+      // Force a session update and redirect based on user type
+      if (userType === "serviceProvider") {
+        router.push("/provider/dashboard");
+      } else {
+        router.push("/customer/index");
+      }
     } catch (err: any) {
       console.error("Login error:", err);
       setError(err.message || "An error occurred during login");
@@ -77,7 +82,7 @@ function LoginPage() {
           <button
             type="button"
             onClick={() => setUserType("user")}
-            className={`flex-1 py-2 px-4 rounded transition-colors ${
+            className={`flex-1 cursor-pointer py-2 px-4 rounded transition-colors ${
               userType === "user"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
@@ -88,7 +93,7 @@ function LoginPage() {
           <button
             type="button"
             onClick={() => setUserType("serviceProvider")}
-            className={`flex-1 py-2 px-4 rounded transition-colors ${
+            className={`flex-1 cursor-pointer py-2 px-4 rounded transition-colors ${
               userType === "serviceProvider"
                 ? "bg-blue-600 text-white"
                 : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
@@ -121,7 +126,7 @@ function LoginPage() {
           <button
             type="submit"
             disabled={loading || !userType}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
+            className="w-full bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>

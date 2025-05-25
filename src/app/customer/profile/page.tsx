@@ -89,12 +89,12 @@ export default function UserProfilePage() {
           />
         </div>
         <span className="text-white font-extrabold text-2xl tracking-tight" style={{ fontFamily: "'Segoe UI', 'Arial', sans-serif", letterSpacing: "0.01em" }}>
-          Service<span className="text-[#19E6A7]">Finder</span>
+          Service<span className="text-[#7919e6]">Finder</span>
         </span>
       </div>
       {/* Right: User, Cart, Settings */}
       <div className="flex items-center gap-6 text-gray-700 text-base">
-        <div className="flex items-center gap-1 cursor-pointer">
+        <div className="flex items-center gap-1 text-white">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
@@ -102,14 +102,14 @@ export default function UserProfilePage() {
           
         </div>
         {/* Cart Button */}
-        <button className="hover:text-[#E91E63] flex items-center" aria-label="Cart">
+        <button className="hover:text-[#E91E63] cursor-pointer flex items-center text-white" aria-label="Cart">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.6M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
           </svg>
         </button>
         <div className="relative">
           <button
-            className="hover:text-[#E91E63] flex items-center"
+            className="hover:text-[#E91E63]  cursor-pointer flex items-center text-white"
             onClick={() => setShowSettings((s) => !s)}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
