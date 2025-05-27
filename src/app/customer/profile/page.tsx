@@ -2,6 +2,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
+import Link from 'next/link';
 
 export default function UserProfilePage() {
   const { data: session } = useSession();
@@ -92,6 +93,18 @@ export default function UserProfilePage() {
           Service<span className="text-[#7919e6]">Finder</span>
         </span>
       </div>
+      {/* Center: Navigation */}
+      <div className="hidden md:flex items-center gap-6 text-white">
+        <Link href="/customer/index" className="hover:text-[#7919e6] transition-colors">
+          Home
+        </Link>
+        <Link href="/customer/bookings" className="hover:text-[#7919e6] transition-colors" >
+          My Bookings
+        </Link>
+        <Link href="/customer/profile" className="text-[#7919e6] font-semibold" >
+          Profile
+        </Link>
+      </div>
       {/* Right: User, Cart, Settings */}
       <div className="flex items-center gap-6 text-gray-700 text-base">
         <div className="flex items-center gap-1 text-white">
@@ -119,10 +132,9 @@ export default function UserProfilePage() {
           </button>
           {showSettings && (
             <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
-              <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
                 Logout
               </button>

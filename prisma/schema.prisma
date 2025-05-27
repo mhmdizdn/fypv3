@@ -15,6 +15,7 @@ model User {
   username      String @unique
   name      String?
   password String
+  bookings  Booking[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -31,6 +32,7 @@ model ServiceProvider {
   longitude Float?
   address   String?
   services  Service[]
+  notifications Notification[]
 }
 
 model Service {
@@ -42,6 +44,53 @@ model Service {
   imageUrl    String?
   provider    ServiceProvider @relation(fields: [providerId], references: [id])
   providerId  Int
+  bookings    Booking[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Booking {
+  id              Int      @id @default(autoincrement())
+  service         Service  @relation(fields: [serviceId], references: [id])
+  serviceId       Int
+  customer        User     @relation(fields: [customerId], references: [id])
+  customerId      Int
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  customerAddress String
+  scheduledDate   DateTime
+  scheduledTime   String
+  status          BookingStatus @default(PENDING)
+  totalAmount     Float
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Notification {
+  id          Int      @id @default(autoincrement())
+  provider    ServiceProvider @relation(fields: [providerId], references: [id])
+  providerId  Int
+  title       String
+  message     String
+  type        NotificationType @default(BOOKING)
+  isRead      Boolean @default(false)
+  bookingId   Int?
+  createdAt   DateTime @default(now())
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+enum NotificationType {
+  BOOKING
+  BOOKING_UPDATE
+  SYSTEM
 }

@@ -87,6 +87,20 @@ export async function POST(req: Request) {
             );
         }
 
+        // Check if provider has filled in required profile information
+        if (!provider.phone || !provider.latitude || !provider.longitude) {
+            return NextResponse.json(
+                { 
+                    message: "Please complete your profile first. You need to add your phone number and shop location before adding services.",
+                    missingFields: {
+                        phone: !provider.phone,
+                        location: !provider.latitude || !provider.longitude
+                    }
+                },
+                { status: 400 }
+            );
+        }
+
         // Handle image upload if present
         let imageUrl = null;
         if (image && image.size > 0) {

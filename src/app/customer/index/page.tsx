@@ -435,24 +435,33 @@ export default function IndexPage() {
           Service<span className="text-[#7919e6]">Finder</span>
         </span>
       </div>
+      {/* Center: Navigation */}
+      <div className="hidden md:flex items-center gap-6 text-white">
+        <Link href="/customer/index" className="text-[#7919e6] font-semibold">
+          Home
+        </Link>
+        <Link href="/customer/bookings" className="hover:text-[#7919e6] transition-colors" >
+          My Bookings
+        </Link>
+      </div>
       {/* Right: User, Cart, Settings */}
       <div className="flex items-center gap-6 text-gray-700 text-base">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 text-white">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           <span>{userName}</span>
 
         </div>
-        {/* Cart Button */}
-        <button className="hover:text-[#E91E63] cursor-pointer flex items-center" aria-label="Cart">
+        {/* My Bookings Button */}
+        <Link href="/customer/bookings" className="hover:text-[#E91E63] cursor-pointer flex items-center text-white" aria-label="My Bookings">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.6M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-        </button>
+        </Link>
         <div className="relative">
           <button
-            className="hover:text-[#E91E63] cursor-pointer flex items-center"
+            className="hover:text-[#E91E63] cursor-pointer flex items-center text-white"
             onClick={() => setShowSettings((s) => !s)}
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -465,7 +474,7 @@ export default function IndexPage() {
               <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
                 Logout
               </button>

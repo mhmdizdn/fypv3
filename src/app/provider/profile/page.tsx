@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from "@/components/ui/button";
+import { NotificationDropdown } from '@/components/ui/notification-dropdown';
 
 // Define Google Maps type
 declare global {
@@ -392,14 +393,10 @@ export default function ProviderProfilePage() {
         {/* Right: User, Cart, Settings */}
                 <div className="flex items-center gap-6 text-white text-base">          <div className="flex items-center gap-1 cursor-pointer">            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">              <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />            </svg>            <span>{providerData.name || providerData.username}</span>          </div>          {providerData.phone && (            <div className="flex items-center gap-1">              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />              </svg>              <span>{providerData.phone}</span>            </div>          )}
           {/* Notifications */}
-          <button className="hover:text-[#E91E63] flex items-center" aria-label="Notifications">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-            </svg>
-          </button>
+          <NotificationDropdown />
           <div className="relative">
             <button
-              className="hover:text-[#E91E63] flex items-center"
+              className="hover:text-[#E91E63] flex items-center cursor-pointer"
               onClick={() => setShowSettings((s) => !s)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
@@ -409,10 +406,10 @@ export default function ProviderProfilePage() {
             </button>
             {showSettings && (
               <div className="absolute right-0 mt-2 w-32 text-black bg-white border rounded shadow-lg z-50">
-                <a href="/provider/dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</a>
+                <a href="/provider/dashboard" className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Dashboard</a>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-black hover:bg-gray-100"
+                  className="w-full text-left px-4 py-2 text-black hover:bg-gray-100 cursor-pointer"
                 >
                   Logout
                 </button>
@@ -433,8 +430,33 @@ export default function ProviderProfilePage() {
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Profile Information */}
+          <>
+            {/* Profile Completion Status */}
+            {(!providerData.phone || !providerData.latitude || !providerData.longitude) && (
+              <div className="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-lg">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-blue-800">Complete Your Profile to Add Services</h3>
+                    <div className="mt-1 text-sm text-blue-700">
+                      <p>
+                        To add services on the platform, you need to complete the following required fields:
+                        {!providerData.phone && <span className="font-medium"> Phone Number</span>}
+                        {!providerData.phone && (!providerData.latitude || !providerData.longitude) && <span>, </span>}
+                        {(!providerData.latitude || !providerData.longitude) && <span className="font-medium"> Shop Location</span>}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Profile Information */}
             <div className="md:col-span-2">
               <div className="bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
@@ -491,23 +513,40 @@ export default function ProviderProfilePage() {
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Phone</label>
+                    <label className="block text-gray-700 mb-2">
+                      Phone <span className="text-red-500">*</span>
+                      <span className="text-sm text-gray-500 font-normal">(Required to add services)</span>
+                    </label>
                     <input
                       type="text"
                       name="phone"
                       value={providerData.phone || ''}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 ${
+                        !providerData.phone ? 'border-red-300 focus:ring-red-500' : 'focus:ring-blue-500'
+                      }`}
+                      placeholder="Enter your phone number"
                     />
+                    {!providerData.phone && (
+                      <p className="text-red-500 text-sm mt-1">Phone number is required to add services</p>
+                    )}
                   </div>
 
                   <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Shop Location</label>
+                    <label className="block text-gray-700 mb-2">
+                      Shop Location <span className="text-red-500">*</span>
+                      <span className="text-sm text-gray-500 font-normal">(Required to add services)</span>
+                    </label>
                     <div 
                       ref={mapRef} 
-                      className="w-full h-96 rounded-lg border border-gray-300 mb-2"
+                      className={`w-full h-96 rounded-lg border mb-2 ${
+                        !providerData.latitude || !providerData.longitude ? 'border-red-300' : 'border-gray-300'
+                      }`}
                     ></div>
                     <p className="text-sm text-gray-500 mb-2">Click on the map or drag the marker to set your shop location</p>
+                    {(!providerData.latitude || !providerData.longitude) && (
+                      <p className="text-red-500 text-sm mb-2">Shop location is required to add services</p>
+                    )}
                     {mapError && (
                       <p className="text-red-500 text-sm">{mapError}</p>
                     )}
@@ -629,6 +668,7 @@ export default function ProviderProfilePage() {
               </div>
             </div>
           </div>
+          </>
         )}
       </div>
     </div>

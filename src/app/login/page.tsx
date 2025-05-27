@@ -136,7 +136,7 @@ function LoginPage() {
               <button
                 type="button"
                 onClick={() => router.push("/register")}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-blue-600 hover:text-blue-700 font-medium cursor-pointer"
               >
                 Create one
               </button>

@@ -5,6 +5,7 @@ import { Navbar } from '@/components/ui/navbar';
 import { useSearchParams } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from "@/components/ui/button";
+import { BookingForm } from '@/components/ui/booking-form';
 
 interface Service {
   id: number;
@@ -30,16 +31,24 @@ interface Service {
 }
 
 function ServiceNavbar() {
-  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-  const address = searchParams?.get('address') || 'Select your location';
+  const searchParams = useSearchParams();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const address = mounted ? (searchParams.get('address') || 'Select your location') : 'Select your location';
 
   // Get user name from session
   const { data: session } = useSession();
-  const userName = session?.user?.name || 'Account';
+  const userName = mounted && session?.user?.name ? session.user.name : 'Account';
 
   const [showSettings, setShowSettings] = useState(false);
   const handleLogout = async () => {
-    localStorage.clear();
+    if (typeof window !== 'undefined') {
+      localStorage.clear();
+    }
     await signOut({ callbackUrl: "/login" });
   };
 
@@ -77,11 +86,11 @@ function ServiceNavbar() {
           <span>{userName}</span>
         </div>
         {/* Cart Button */}
-        <button className="hover:text-[#E91E63] cursor-pointer flex items-center text-white"  aria-label="Cart">
+        <Link href="/customer/bookings" className="hover:text-[#E91E63] cursor-pointer flex items-center text-white">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.6M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
-        </button>
+        </Link>
         <div className="relative ">
           <button
             className="hover:text-[#E91E63] cursor-pointer flex items-center text-white"
@@ -92,12 +101,12 @@ function ServiceNavbar() {
               <circle cx="12" cy="12" r="3" fill="#E91E63" />
             </svg>
           </button>
-          {showSettings && (
+          {mounted && showSettings && (
             <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
-              <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
+              <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</a>
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
               >
                 Logout
               </button>
@@ -119,19 +128,28 @@ export default function ServiceRecommendationPage() {
   const [userCoordinates, setUserCoordinates] = useState<{lat: number, lng: number} | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [showServiceDetails, setShowServiceDetails] = useState(false);
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [customerAddress, setCustomerAddress] = useState('');
+  const [mounted, setMounted] = useState(false);
   
   const searchParams = useSearchParams();
   
-  // Get location coordinates from URL
+  // Set mounted state and get location coordinates from URL
   useEffect(() => {
+    setMounted(true);
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
+    const address = searchParams.get('address');
     
     if (lat && lng) {
       setUserCoordinates({
         lat: parseFloat(lat),
         lng: parseFloat(lng)
       });
+    }
+    
+    if (address) {
+      setCustomerAddress(address);
     }
   }, [searchParams]);
 
@@ -183,6 +201,28 @@ export default function ServiceRecommendationPage() {
   const closeServiceDetails = () => {
     setShowServiceDetails(false);
     setSelectedService(null);
+  };
+
+  // Open booking form
+  const openBookingForm = (service: Service) => {
+    setSelectedService(service);
+    setShowServiceDetails(false);
+    setShowBookingForm(true);
+  };
+
+  // Close booking form
+  const closeBookingForm = () => {
+    setShowBookingForm(false);
+    setSelectedService(null);
+  };
+
+  // Handle successful booking
+  const handleBookingSuccess = (booking: any) => {
+    setShowBookingForm(false);
+    setSelectedService(null);
+    if (typeof window !== 'undefined') {
+      alert('Booking created successfully! You can view it in your bookings page.');
+    }
   };
 
   // Calculate distance text for display
@@ -404,10 +444,6 @@ export default function ServiceRecommendationPage() {
                 <div className="lg:col-span-2">
                   <div className="flex items-center gap-3 mb-4">
                     <h2 className="text-2xl font-bold">{selectedService.name}</h2>
-                    {/* <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" className="w-5 h-5"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.382 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.382-2.454a1 1 0 00-1.176 0l-3.382 2.454c-.784.57-1.838-.196-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                      5.0 <span className="text-gray-500 font-normal">({Math.floor(Math.random() * 20) + 5} reviews)</span>
-                    </span> */}
                   </div>
                   
                   <div className="mb-6">
@@ -427,7 +463,7 @@ export default function ServiceRecommendationPage() {
                     {selectedService.createdAt && (
                       <div>
                         <div className="text-gray-500 text-sm">Listed Since</div>
-                        <div>{new Date(selectedService.createdAt).toLocaleDateString('en-GB')}</div>
+                        <div>{mounted ? new Date(selectedService.createdAt).toLocaleDateString('en-GB') : selectedService.createdAt}</div>
                       </div>
                     )}
                     {getDistanceText(selectedService) && (
@@ -499,14 +535,43 @@ export default function ServiceRecommendationPage() {
                   </div>
                   
                   <div className="mt-6 flex flex-col gap-2">                    
-                    <Button variant="gradient" className="w-full cursor-pointer">Contact Provider</Button>                    
-                    <Button variant="outline" className="w-full cursor-pointer border-[#7919e6] text-[#7919e6] hover:bg-[#f0fdf9]">Book Service</Button>
+                    {selectedService.provider.phone && (
+                      <Button 
+                        variant="outline" 
+                        className="w-full cursor-pointer"
+                        onClick={() => {
+                          if (typeof window !== 'undefined') {
+                            window.open(`tel:${selectedService.provider.phone}`);
+                          }
+                        }}
+                      >
+                        Contact Provider
+                      </Button>
+                    )}                    
+                    <Button 
+                      variant="gradient" 
+                      className="w-full cursor-pointer"
+                      onClick={() => openBookingForm(selectedService)}
+                    >
+                      Book Service
+                    </Button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Booking Form Modal */}
+      {showBookingForm && selectedService && (
+        <BookingForm
+          service={selectedService}
+          onClose={closeBookingForm}
+          onSuccess={handleBookingSuccess}
+          customerAddress={customerAddress}
+          customerCoordinates={userCoordinates}
+        />
       )}
     </>
   );
