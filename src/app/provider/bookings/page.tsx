@@ -69,6 +69,9 @@ function ProviderNavbar() {
         <Link href="/provider/bookings" className="text-[#7919e6] font-semibold">
           Bookings
         </Link>
+        <Link href="/provider/reviews" className="hover:text-[#7919e6] transition-colors">
+          Reviews
+        </Link>
       </div>
 
       {/* Right: User, Settings */}
@@ -371,7 +374,7 @@ export default function ProviderBookingsPage() {
                           {action.label}
                         </Button>
                       ))}
-                      {getNavigationUrl(booking.customerAddress) && booking.status !== 'COMPLETED' && (
+                      {getNavigationUrl(booking.customerAddress) && booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && (
                         <Button
                           variant="outline"
                           size="sm"

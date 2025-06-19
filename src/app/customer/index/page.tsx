@@ -55,11 +55,9 @@ export default function IndexPage() {
       document.head.appendChild(script);
       
       return () => {
-        // Clean up the script when component unmounts
         if (script.parentNode) {
           script.parentNode.removeChild(script);
         }
-        // Safe way to delete the property
         if (window.initMap) {
           window.initMap = undefined as any;
         }
@@ -69,57 +67,54 @@ export default function IndexPage() {
     }
   }, []);
 
+  // Separate function to initialize the map
+  const initializeMap = () => {
+    if (!googleMapRef.current && mapRef.current && window.google) {
+      googleMapRef.current = new window.google.maps.Map(mapRef.current, {
+        center: userLocation,
+        zoom: 15,
+        mapId: 'DEMO_MAP_ID',
+        disableDefaultUI: false,
+        zoomControl: true,
+        mapTypeControl: true,
+        streetViewControl: true,
+        fullscreenControl: true,
+      });
+
+      // Add a click listener to the map
+      googleMapRef.current.addListener('click', (e: any) => {
+        const clickedLocation = {
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng()
+        };
+        updateUserLocation(clickedLocation, true);
+      });
+
+      // Create marker immediately
+      markerRef.current = new window.google.maps.Marker({
+        position: userLocation,
+        map: googleMapRef.current,
+        title: "Your location",
+        animation: window.google.maps.Animation.DROP,
+        draggable: true,
+      });
+
+      // Add event listener for when the marker is dragged
+      markerRef.current.addListener('dragend', () => {
+        const newPosition = markerRef.current.getPosition();
+        const newLocation = {
+          lat: newPosition.lat(),
+          lng: newPosition.lng()
+        };
+        updateUserLocation(newLocation, true);
+      });
+    }
+  };
+
   // Initialize map when Google Maps is loaded and we have a location
   useEffect(() => {
-    if (mapLoaded && userLocation && mapRef.current) {
-      if (!googleMapRef.current) {
-        // Create new map
-        googleMapRef.current = new window.google.maps.Map(mapRef.current, {
-          center: userLocation,
-          zoom: 15,
-          mapId: 'DEMO_MAP_ID',
-          disableDefaultUI: false,
-          zoomControl: true,
-          mapTypeControl: true,
-          streetViewControl: true,
-          fullscreenControl: true,
-        });
-
-        // Add a click listener to the map to allow location adjustment by clicking
-        googleMapRef.current.addListener('click', (e: any) => {
-          const clickedLocation = {
-            lat: e.latLng.lat(),
-            lng: e.latLng.lng()
-          };
-          updateUserLocation(clickedLocation, true);
-        });
-      } else {
-        // Update existing map
-        googleMapRef.current.setCenter(userLocation);
-      }
-      
-      // Update or create marker
-      if (!markerRef.current) {
-        markerRef.current = new window.google.maps.Marker({
-          position: userLocation,
-          map: googleMapRef.current,
-          title: "Your location",
-          animation: window.google.maps.Animation.DROP,
-          draggable: true, // Allow marker to be dragged
-        });
-
-        // Add event listener for when the marker is dragged
-        markerRef.current.addListener('dragend', () => {
-          const newPosition = markerRef.current.getPosition();
-          const newLocation = {
-            lat: newPosition.lat(),
-            lng: newPosition.lng()
-          };
-          updateUserLocation(newLocation, true);
-        });
-      } else {
-        markerRef.current.setPosition(userLocation);
-      }
+    if (mapLoaded && userLocation && mapRef.current && window.google) {
+      initializeMap();
     }
   }, [mapLoaded, userLocation]);
 

@@ -1,8 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Button } from './button';
+
+interface Review {
+  id: number;
+  rating: number;
+  comment: string | null;
+  providerComment: string | null;
+  createdAt: string;
+  updatedAt?: string;
+  customer: {
+    name: string | null;
+    username: string;
+  };
+}
 
 interface Service {
   id: number;
@@ -17,6 +30,7 @@ interface Service {
     phone?: string;
     address?: string;
   };
+  reviews?: Review[];
 }
 
 interface BookingFormProps {
@@ -44,6 +58,61 @@ export function BookingForm({ service, onClose, onSuccess, customerAddress = '',
   const [additionalAddress, setAdditionalAddress] = useState(customerAddress);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+
+  // Fetch reviews when component mounts
+  useEffect(() => {
+    fetchServiceReviews();
+  }, [service.id]);
+
+  // Fetch reviews for the service
+  const fetchServiceReviews = async () => {
+    try {
+      setLoadingReviews(true);
+      const response = await fetch(`/api/reviews?serviceId=${service.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data.reviews || []);
+      } else {
+        console.error('Failed to fetch reviews');
+        setReviews([]);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      setReviews([]);
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  // Calculate average rating from reviews
+  const calculateAverageRating = (reviews: Review[]) => {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return sum / reviews.length;
+  };
+
+  // Render star rating
+  const renderStars = (rating: number, size: 'sm' | 'md' = 'sm') => {
+    const sizeClasses = {
+      sm: 'text-sm',
+      md: 'text-base'
+    };
+    
+    return (
+      <div className={`flex gap-1 ${sizeClasses[size]}`}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={star <= rating ? 'text-yellow-400' : 'text-gray-300'}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   // Generate time slots
   const timeSlots = [
@@ -124,6 +193,17 @@ export function BookingForm({ service, onClose, onSuccess, customerAddress = '',
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <h3 className="font-semibold text-lg text-gray-900">{service.name}</h3>
             <p className="text-gray-600 text-sm mb-2">{service.description}</p>
+            
+            {/* Reviews Summary */}
+            {reviews.length > 0 && (
+              <div className="flex items-center gap-2 mb-2">
+                {renderStars(calculateAverageRating(reviews), 'sm')}
+                <span className="text-sm text-gray-600">
+                  ({calculateAverageRating(reviews).toFixed(1)}) • {reviews.length} review{reviews.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+            )}
+            
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">
                 Provider: {service.provider.name || 'Service Provider'}
@@ -133,6 +213,64 @@ export function BookingForm({ service, onClose, onSuccess, customerAddress = '',
               </span>
             </div>
           </div>
+
+          {/* Reviews Section */}
+          {reviews.length > 0 && (
+            <div className="bg-white border rounded-lg p-4 mb-6">
+              <h4 className="font-semibold text-gray-900 mb-3">Recent Reviews</h4>
+              
+              {loadingReviews ? (
+                <div className="text-center py-4">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#7919e6] mx-auto"></div>
+                  <p className="text-gray-600 mt-2 text-sm">Loading reviews...</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-48 overflow-y-auto">
+                  {reviews.slice(0, 3).map(review => (
+                    <div key={review.id} className="border-b border-gray-200 pb-3 last:border-b-0">
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 bg-[#7919e6] rounded-full flex items-center justify-center text-white font-bold text-xs">
+                          {(review.customer.name || review.customer.username).charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium text-sm">
+                              {review.customer.name || review.customer.username}
+                            </span>
+                            {renderStars(review.rating, 'sm')}
+                          </div>
+                          {review.comment && (
+                            <p className="text-gray-700 text-sm mb-1">{review.comment}</p>
+                          )}
+                          <p className="text-xs text-gray-500 mb-2">
+                            {new Date(review.createdAt).toLocaleDateString('en-GB')}
+                          </p>
+                          
+                          {/* Provider Response */}
+                          {review.providerComment && (
+                            <div className="bg-blue-50 border-l-2 border-[#7919e6] pl-2 py-1 mt-2">
+                              <p className="text-xs font-medium text-gray-700 mb-1">Provider Response:</p>
+                              <p className="text-xs text-gray-600">{review.providerComment}</p>
+                              {review.updatedAt && (
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {new Date(review.updatedAt).toLocaleDateString('en-GB')}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {reviews.length > 3 && (
+                    <p className="text-sm text-gray-500 text-center pt-2">
+                      And {reviews.length - 3} more review{reviews.length - 3 !== 1 ? 's' : ''}...
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4">

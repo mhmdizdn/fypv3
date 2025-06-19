@@ -35,7 +35,8 @@ export async function GET(request: NextRequest) {
             include: {
               provider: true
             }
-          }
+          },
+          review: true
         },
         orderBy: { createdAt: 'desc' }
       });

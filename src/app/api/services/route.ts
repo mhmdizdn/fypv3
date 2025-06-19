@@ -18,6 +18,19 @@ export async function GET() {
                         longitude: true,
                         address: true
                     }
+                },
+                reviews: {
+                    include: {
+                        customer: {
+                            select: {
+                                name: true,
+                                username: true
+                            }
+                        }
+                    },
+                    orderBy: {
+                        createdAt: 'desc'
+                    }
                 }
             },
             orderBy: {

@@ -10,7 +10,7 @@ A comprehensive booking system that allows customers to book services from provi
 - **Booking Management**: View and manage all bookings in one place
 - **Status Tracking**: Track booking status from pending to completion
 - **Cancellation**: Cancel pending bookings
-- **Contact Provider**: Direct phone contact with service providers
+- **Provider Contact**: View provider contact information for easy communication
 
 ### For Service Providers
 - **Booking Management**: View and manage all incoming bookings

@@ -9,6 +9,16 @@ datasource db {
 }
 
 // Define your models here
+model Admin {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String   @unique
+  name      String?
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -16,6 +26,7 @@ model User {
   name      String?
   password String
   bookings  Booking[]
+  reviews   Review[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -33,6 +44,8 @@ model ServiceProvider {
   address   String?
   services  Service[]
   notifications Notification[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Service {
@@ -45,6 +58,7 @@ model Service {
   provider    ServiceProvider @relation(fields: [providerId], references: [id])
   providerId  Int
   bookings    Booking[]
+  reviews     Review[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -64,8 +78,24 @@ model Booking {
   status          BookingStatus @default(PENDING)
   totalAmount     Float
   notes           String?
+  review          Review?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  bookingId   Int      @unique
+  service     Service  @relation(fields: [serviceId], references: [id])
+  serviceId   Int
+  customer    User     @relation(fields: [customerId], references: [id])
+  customerId  Int
+  rating      Int      // 1-5 stars
+  comment     String?
+  providerComment String?  // Provider's response to the review
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Notification {

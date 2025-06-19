@@ -28,6 +28,20 @@ interface Service {
     longitude?: number;
     address?: string;
   };
+  reviews?: Review[];
+  averageRating?: number;
+  totalReviews?: number;
+}
+
+interface Review {
+  id: number;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  customer: {
+    name: string | null;
+    username: string;
+  };
 }
 
 function ServiceNavbar() {
@@ -131,6 +145,9 @@ export default function ServiceRecommendationPage() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [customerAddress, setCustomerAddress] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
+  const [ratingFilter, setRatingFilter] = useState('all');
   
   const searchParams = useSearchParams();
   
@@ -195,12 +212,63 @@ export default function ServiceRecommendationPage() {
   const openServiceDetails = (service: Service) => {
     setSelectedService(service);
     setShowServiceDetails(true);
+    fetchServiceReviews(service.id);
+  };
+
+  // Fetch reviews for a specific service
+  const fetchServiceReviews = async (serviceId: number) => {
+    try {
+      setLoadingReviews(true);
+      const response = await fetch(`/api/reviews?serviceId=${serviceId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setReviews(data.reviews || []);
+      } else {
+        console.error('Failed to fetch reviews');
+        setReviews([]);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      setReviews([]);
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  // Calculate average rating from reviews
+  const calculateAverageRating = (reviews: Review[]) => {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return sum / reviews.length;
+  };
+
+  // Render star rating
+  const renderStars = (rating: number, size: 'sm' | 'md' | 'lg' = 'md') => {
+    const sizeClasses = {
+      sm: 'text-sm',
+      md: 'text-base',
+      lg: 'text-lg'
+    };
+    
+    return (
+      <div className={`flex gap-1 ${sizeClasses[size]}`}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={star <= rating ? 'text-yellow-400' : 'text-gray-300'}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
   };
 
   // Close service details modal
   const closeServiceDetails = () => {
     setShowServiceDetails(false);
     setSelectedService(null);
+    setReviews([]);
   };
 
   // Open booking form
@@ -251,12 +319,31 @@ export default function ServiceRecommendationPage() {
   };
 
   // Filter and sort logic
-  const filteredServices = services.filter(service =>
-    service.name.toLowerCase().includes(search.toLowerCase()) ||
-    service.category.toLowerCase().includes(search.toLowerCase()) ||
-    (service.provider.name && service.provider.name.toLowerCase().includes(search.toLowerCase())) ||
-    service.provider.serviceType.toLowerCase().includes(search.toLowerCase())
-  ).sort((a, b) => {
+  const filteredServices = services.filter(service => {
+    // Text search filter
+    const matchesSearch = service.name.toLowerCase().includes(search.toLowerCase()) ||
+      service.category.toLowerCase().includes(search.toLowerCase()) ||
+      (service.provider.name && service.provider.name.toLowerCase().includes(search.toLowerCase())) ||
+      service.provider.serviceType.toLowerCase().includes(search.toLowerCase());
+    
+    // Rating filter
+    let matchesRating = true;
+    if (ratingFilter !== 'all') {
+      const serviceReviews = service.reviews || [];
+      if (serviceReviews.length === 0 && ratingFilter !== 'no-rating') {
+        matchesRating = false;
+      } else if (serviceReviews.length > 0) {
+        const avgRating = calculateAverageRating(serviceReviews);
+        const targetRating = parseFloat(ratingFilter);
+        // Check if the average rating falls within the target star range (e.g., 4.0-4.9 for "4 stars")
+        matchesRating = Math.floor(avgRating) === targetRating;
+      } else if (ratingFilter === 'no-rating') {
+        matchesRating = serviceReviews.length === 0;
+      }
+    }
+    
+    return matchesSearch && matchesRating;
+  }).sort((a, b) => {
     if (sort === 'price-high') {
       return b.price - a.price;
     } else if (sort === 'price-low') {
@@ -306,6 +393,76 @@ export default function ServiceRecommendationPage() {
               </label>
               <label className="flex items-center gap-2">
                 <input type="radio" name="sort" checked={sort === 'price-low'} onChange={() => setSort('price-low')} /> Price (low to high)
+              </label>
+            </div>
+          </div>
+
+          {/* Rating Filter */}
+          <div className="mb-6">
+            <div className="font-semibold mb-2">Rating</div>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2">
+                <input 
+                  type="radio" 
+                  name="rating" 
+                  checked={ratingFilter === 'all'} 
+                  onChange={() => setRatingFilter('all')} 
+                />
+                <span>All ratings</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input 
+                  type="radio" 
+                  name="rating" 
+                  checked={ratingFilter === '5'} 
+                  onChange={() => setRatingFilter('5')} 
+                />
+                <span>5 stars</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input 
+                  type="radio" 
+                  name="rating" 
+                  checked={ratingFilter === '4'} 
+                  onChange={() => setRatingFilter('4')} 
+                />
+                <span>4 stars</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input 
+                  type="radio" 
+                  name="rating" 
+                  checked={ratingFilter === '3'} 
+                  onChange={() => setRatingFilter('3')} 
+                />
+                <span>3 stars</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input 
+                  type="radio" 
+                  name="rating" 
+                  checked={ratingFilter === '2'} 
+                  onChange={() => setRatingFilter('2')} 
+                />
+                <span>2 stars</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input 
+                  type="radio" 
+                  name="rating" 
+                  checked={ratingFilter === '1'} 
+                  onChange={() => setRatingFilter('1')} 
+                />
+                <span>1 star</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input 
+                  type="radio" 
+                  name="rating" 
+                  checked={ratingFilter === 'no-rating'} 
+                  onChange={() => setRatingFilter('no-rating')} 
+                />
+                <span className="text-sm text-gray-600">No ratings yet</span>
               </label>
             </div>
           </div>
@@ -365,11 +522,20 @@ export default function ServiceRecommendationPage() {
                     <div className="p-4 flex-1 flex flex-col">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="font-bold text-lg line-clamp-1">{service.name}</span>
-                        {/* <span className="text-yellow-500 flex items-center gap-1 text-sm font-semibold">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" className="w-4 h-4"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.382 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.382-2.454a1 1 0 00-1.176 0l-3.382 2.454c-.784.57-1.838-.196-1.539-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>
-                          5.0 <span className="text-gray-500 font-normal">({Math.floor(Math.random() * 20) + 5})</span>
-                        </span> */}
                       </div>
+                      
+                      {/* Show rating if service has reviews */}
+                      {service.reviews && service.reviews.length > 0 ? (
+                        <div className="flex items-center gap-2 mb-1">
+                          {renderStars(calculateAverageRating(service.reviews), 'sm')}
+                          <span className="text-sm text-gray-600">
+                            ({calculateAverageRating(service.reviews).toFixed(1)}) • {service.reviews.length} review{service.reviews.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500 mb-1">No reviews yet</div>
+                      )}
+                      
                       <div className="text-gray-500 text-sm mb-1">{service.category}</div>
                       <div className="text-gray-700 text-sm mb-2">Provider: {service.provider.name || 'Unknown'}</div>
                       
@@ -450,7 +616,7 @@ export default function ServiceRecommendationPage() {
                     <div className="text-lg font-semibold mb-2">Description</div>
                     <p className="text-gray-700">{selectedService.description}</p>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
                       <div className="text-gray-500 text-sm">Category</div>
@@ -479,6 +645,91 @@ export default function ServiceRecommendationPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Reviews Section */}
+                  <div className="mb-6">
+                    <div className="text-lg font-semibold mb-4">Customer Reviews</div>
+                    
+                    {loadingReviews ? (
+                      <div className="text-center py-4">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7919e6] mx-auto"></div>
+                        <p className="text-gray-600 mt-2">Loading reviews...</p>
+                      </div>
+                    ) : reviews.length > 0 ? (
+                      <div className="space-y-4">
+                        {/* Overall Rating Summary */}
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <div className="flex items-center gap-4">
+                            <div className="text-center">
+                              <div className="text-3xl font-bold text-[#7919e6]">
+                                {calculateAverageRating(reviews).toFixed(1)}
+                              </div>
+                              <div className="flex justify-center mb-1">
+                                {renderStars(calculateAverageRating(reviews), 'md')}
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                {reviews.length} review{reviews.length !== 1 ? 's' : ''}
+                              </div>
+                            </div>
+                            <div className="flex-1">
+                              {[5, 4, 3, 2, 1].map(rating => {
+                                const count = reviews.filter(r => r.rating === rating).length;
+                                const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                                return (
+                                  <div key={rating} className="flex items-center gap-2 mb-1">
+                                    <span className="text-sm w-2">{rating}</span>
+                                    <span className="text-yellow-400">★</span>
+                                    <div className="flex-1 bg-gray-200 rounded-full h-2">
+                                      <div 
+                                        className="bg-yellow-400 h-2 rounded-full" 
+                                        style={{ width: `${percentage}%` }}
+                                      ></div>
+                                    </div>
+                                    <span className="text-sm text-gray-600 w-8">{count}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Individual Reviews */}
+                        <div className="space-y-3 max-h-64 overflow-y-auto">
+                          {reviews.map(review => (
+                            <div key={review.id} className="border-b border-gray-200 pb-3 last:border-b-0">
+                              <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 bg-[#7919e6] rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                  {(review.customer.name || review.customer.username).charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-medium text-sm">
+                                      {review.customer.name || review.customer.username}
+                                    </span>
+                                    {renderStars(review.rating, 'sm')}
+                                  </div>
+                                  {review.comment && (
+                                    <p className="text-gray-700 text-sm mb-1">{review.comment}</p>
+                                  )}
+                                  <p className="text-xs text-gray-500">
+                                    {mounted ? new Date(review.createdAt).toLocaleDateString('en-GB') : review.createdAt}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.013 8.013 0 01-2.83-.497l-5.17 1.55 1.55-5.17A8.013 8.013 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
+                        </svg>
+                        <p>No reviews yet</p>
+                        <p className="text-sm">Be the first to review this service!</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 {/* Provider Info */}
@@ -501,9 +752,11 @@ export default function ServiceRecommendationPage() {
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-600 mt-0.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
                         </svg>
-                        <div>
+                        <div className="flex-1">
                           <div className="text-sm text-gray-500">Contact</div>
-                          <div>{selectedService.provider.phone}</div>
+                          <div>
+                            {selectedService.provider.phone}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -534,20 +787,7 @@ export default function ServiceRecommendationPage() {
                     )}
                   </div>
                   
-                  <div className="mt-6 flex flex-col gap-2">                    
-                    {selectedService.provider.phone && (
-                      <Button 
-                        variant="outline" 
-                        className="w-full cursor-pointer"
-                        onClick={() => {
-                          if (typeof window !== 'undefined') {
-                            window.open(`tel:${selectedService.provider.phone}`);
-                          }
-                        }}
-                      >
-                        Contact Provider
-                      </Button>
-                    )}                    
+                  <div className="mt-6">                    
                     <Button 
                       variant="gradient" 
                       className="w-full cursor-pointer"

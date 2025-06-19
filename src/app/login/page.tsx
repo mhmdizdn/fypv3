@@ -10,11 +10,14 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [userType, setUserType] = useState<"user" | "serviceProvider" | null>(null);
+  const [email, setEmail] = useState("");
 
   useEffect(() => {
     if (status === "authenticated" && session) {
       const userType = (session.user as any).userType;
-      if (userType === "serviceProvider") {
+      if (userType === "admin") {
+        router.push("/admin/dashboard");
+      } else if (userType === "serviceProvider") {
         router.push("/provider/dashboard");
       } else {
         router.push("/customer/index");
@@ -22,18 +25,46 @@ function LoginPage() {
     }
   }, [status, session, router]);
 
+  const isAdminEmail = email === "admin@gmail.com";
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!userType) {
-      setError("Please select a user type");
-      return;
-    }
     setError("");
     setLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+
+    // Check if it's admin email
+    if (email === "admin@gmail.com") {
+      try {
+        const result = await signIn("credentials", {
+          redirect: false,
+          email,
+          password,
+        });
+
+        if (!result?.ok) {
+          throw new Error(result?.error || "Authentication failed");
+        }
+
+        router.push("/admin/dashboard");
+      } catch (err: any) {
+        console.error("Login error:", err);
+        setError(err.message || "An error occurred during login");
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    // For non-admin users, require userType
+    if (!userType) {
+      setError("Please select a user type");
+      setLoading(false);
+      return;
+    }
 
     try {
       const result = await signIn("credentials", {
@@ -78,30 +109,37 @@ function LoginPage() {
             {error}
           </div>
         )}
-        <div className="mb-6 flex gap-4">
-          <button
-            type="button"
-            onClick={() => setUserType("user")}
-            className={`flex-1 cursor-pointer py-2 px-4 rounded transition-colors ${
-              userType === "user"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
-            }`}
-          >
-            User
-          </button>
-          <button
-            type="button"
-            onClick={() => setUserType("serviceProvider")}
-            className={`flex-1 cursor-pointer py-2 px-4 rounded transition-colors ${
-              userType === "serviceProvider"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
-            }`}
-          >
-            Service Provider
-          </button>
-        </div>
+        {isAdminEmail && (
+          <div className="mb-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded">
+            Admin login detected. You will be redirected to the admin dashboard.
+          </div>
+        )}
+        {!isAdminEmail && (
+          <div className="mb-6 flex gap-4">
+            <button
+              type="button"
+              onClick={() => setUserType("user")}
+              className={`flex-1 cursor-pointer py-2 px-4 rounded transition-colors ${
+                userType === "user"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+              }`}
+            >
+              User
+            </button>
+            <button
+              type="button"
+              onClick={() => setUserType("serviceProvider")}
+              className={`flex-1 cursor-pointer py-2 px-4 rounded transition-colors ${
+                userType === "serviceProvider"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+              }`}
+            >
+              Service Provider
+            </button>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
             <label htmlFor="email" className="block mb-1 font-medium">Email</label>
@@ -109,6 +147,8 @@ function LoginPage() {
               type="email"
               id="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-400 dark:bg-gray-700 dark:text-white"
             />
@@ -125,7 +165,7 @@ function LoginPage() {
           </div>
           <button
             type="submit"
-            disabled={loading || !userType}
+            disabled={loading || (!isAdminEmail && !userType)}
             className="w-full bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}

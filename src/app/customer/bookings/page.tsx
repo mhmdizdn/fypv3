@@ -5,6 +5,18 @@ import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+// Import the RatingModal component
+const RatingModal = require('@/components/ui/rating-modal').RatingModal;
+
+interface Review {
+  id: number;
+  rating: number;
+  comment: string | null;
+  providerComment: string | null;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 interface Booking {
   id: number;
   customerName: string;
@@ -17,6 +29,7 @@ interface Booking {
   totalAmount: number;
   notes?: string;
   createdAt: string;
+  review?: Review;
   service: {
     id: number;
     name: string;
@@ -121,6 +134,11 @@ export default function CustomerBookingsPage() {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<string>('all');
   const [mounted, setMounted] = useState(false);
+  const [ratingModal, setRatingModal] = useState<{
+    isOpen: boolean;
+    booking: Booking | null;
+  }>({ isOpen: false, booking: null });
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -169,6 +187,70 @@ export default function CustomerBookingsPage() {
         alert('Network error. Please try again.');
       }
     }
+  };
+
+  const handleOpenRatingModal = (booking: Booking) => {
+    setRatingModal({ isOpen: true, booking });
+  };
+
+  const handleCloseRatingModal = () => {
+    setRatingModal({ isOpen: false, booking: null });
+  };
+
+  const handleSubmitReview = async (rating: number, comment: string) => {
+    if (!ratingModal.booking) return;
+
+    try {
+      setSubmittingReview(true);
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bookingId: ratingModal.booking.id,
+          rating,
+          comment,
+        }),
+      });
+
+      if (response.ok) {
+        // Refresh bookings to show the new review
+        await fetchBookings();
+        handleCloseRatingModal();
+        if (typeof window !== 'undefined') {
+          alert('Thank you for your review!');
+        }
+      } else {
+        const errorData = await response.json();
+        if (typeof window !== 'undefined') {
+          alert(errorData.error || 'Failed to submit review');
+        }
+      }
+    } catch (error) {
+      if (typeof window !== 'undefined') {
+        alert('Network error. Please try again.');
+      }
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
+
+  const renderStars = (rating: number) => {
+    return (
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`text-lg ${
+              star <= rating ? 'text-yellow-400' : 'text-gray-300'
+            }`}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
   };
 
   const getStatusColor = (status: string) => {
@@ -339,6 +421,12 @@ export default function CustomerBookingsPage() {
                       <p className="text-sm text-gray-600">Date: {formatDate(booking.scheduledDate)}</p>
                       <p className="text-sm text-gray-600">Time: {booking.scheduledTime}</p>
                       <p className="text-sm text-gray-600">Amount: RM {booking.totalAmount.toFixed(2)}</p>
+                      {booking.service.provider.phone && (
+                        <div>
+                          <p className="text-sm font-medium text-gray-700">Provider Contact</p>
+                          <p className="text-sm text-gray-900">{booking.service.provider.phone}</p>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <h4 className="font-medium text-gray-900 mb-2">Service Location</h4>
@@ -350,6 +438,38 @@ export default function CustomerBookingsPage() {
                     <div className="mb-4">
                       <h4 className="font-medium text-gray-900 mb-2">Notes</h4>
                       <p className="text-sm text-gray-600">{booking.notes}</p>
+                    </div>
+                  )}
+
+                  {/* Show existing review if available */}
+                  {booking.review && (
+                    <div className="mb-4 bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-900 mb-2">Your Review</h4>
+                      <div className="flex items-center gap-2 mb-2">
+                        {renderStars(booking.review.rating)}
+                        <span className="text-sm text-gray-600">
+                          ({booking.review.rating}/5)
+                        </span>
+                      </div>
+                      {booking.review.comment && (
+                        <p className="text-sm text-gray-600 mb-2">{booking.review.comment}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mb-3">
+                        Reviewed on {formatDate(booking.review.createdAt)}
+                      </p>
+                      
+                      {/* Provider Response */}
+                      {booking.review.providerComment && (
+                        <div className="bg-blue-50 border-l-4 border-[#7919e6] p-3 rounded">
+                          <h5 className="font-medium text-gray-900 mb-1">Provider Response:</h5>
+                          <p className="text-sm text-gray-700">{booking.review.providerComment}</p>
+                          {booking.review.updatedAt && (
+                            <p className="text-xs text-gray-500 mt-2">
+                              Responded on {formatDate(booking.review.updatedAt)}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -368,6 +488,20 @@ export default function CustomerBookingsPage() {
                           Cancel Booking
                         </Button>
                       )}
+                      {/* Add rating button for completed bookings without reviews */}
+                      {booking.status === 'COMPLETED' && !booking.review && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleOpenRatingModal(booking)}
+                          className="text-yellow-600 border-yellow-600 hover:bg-yellow-50"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                          </svg>
+                          Rate Service
+                        </Button>
+                      )}
                       {getNavigationUrl(booking.customerAddress) && booking.status !== 'COMPLETED' && (
                         <Button
                           variant="outline"
@@ -383,22 +517,9 @@ export default function CustomerBookingsPage() {
                           }}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.158.69-.158 1.006 0l4.994 2.497c.317.158.69.158 1.007 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c-.317-.158.69-.158 1.006 0l4.994 2.497c.317.158.69.158 1.007 0z" />
                           </svg>
                           Navigate
-                        </Button>
-                      )}
-                      {booking.service.provider.phone && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            if (typeof window !== 'undefined') {
-                              window.open(`tel:${booking.service.provider.phone}`);
-                            }
-                          }}
-                        >
-                          Call Provider
                         </Button>
                       )}
                     </div>
@@ -409,6 +530,15 @@ export default function CustomerBookingsPage() {
           )}
         </div>
       </div>
+      
+      {/* Rating Modal */}
+      <RatingModal
+        isOpen={ratingModal.isOpen}
+        onClose={handleCloseRatingModal}
+        onSubmit={handleSubmitReview}
+        serviceName={ratingModal.booking?.service.name || ''}
+        loading={submittingReview}
+      />
     </>
   );
 } 

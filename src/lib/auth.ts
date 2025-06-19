@@ -22,11 +22,40 @@ export const authOptions: NextAuthOptions = {
         userType: { label: "User Type", type: "text" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password || !credentials?.userType) {
+        if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing credentials");
         }
 
-        // Check both User and ServiceProvider tables
+        // Check if it's an admin email
+        if (credentials.email === "admin@gmail.com") {
+          const admin = await prisma.admin.findUnique({
+            where: { email: credentials.email }
+          });
+
+          if (!admin) {
+            throw new Error("Admin account not found");
+          }
+
+          const isPasswordValid = await compare(credentials.password, admin.password);
+          if (!isPasswordValid) {
+            throw new Error("Invalid email or password");
+          }
+
+          return {
+            id: admin.id.toString(),
+            email: admin.email,
+            name: admin.name || admin.username,
+            userType: "admin",
+            username: admin.username,
+          } as CustomUser;
+        }
+
+        // For non-admin users, require userType
+        if (!credentials.userType) {
+          throw new Error("Please select a user type");
+        }
+
+        // Check both User and ServiceProvider tables for non-admin users
         const user = await prisma.user.findUnique({
           where: { email: credentials.email }
         });
