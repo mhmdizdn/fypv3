@@ -124,7 +124,7 @@ export function NotificationDropdown({ onNotificationClick }: NotificationDropdo
   return (
     <div className="relative">
       <button
-        className="hover:text-[#E91E63] flex items-center relative"
+        className="hover:text-[#E91E63] flex items-center relative text-white"
         onClick={() => setShowDropdown(!showDropdown)}
         aria-label="Notifications"
       >
