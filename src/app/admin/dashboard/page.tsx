@@ -20,6 +20,7 @@ interface ServiceProvider {
   name: string | null;
   serviceType: string;
   phone: string | null;
+  address: string | null;
   createdAt: string;
 }
 
@@ -28,6 +29,7 @@ interface Booking {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerAddress: string;
   scheduledDate: string;
   scheduledTime: string;
   status: string;
@@ -112,6 +114,8 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<'users' | 'providers' | 'bookings' | 'services' | 'reviews'>('users');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [viewingItem, setViewingItem] = useState<any>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -283,8 +287,12 @@ export default function AdminDashboard() {
   };
 
   const handleViewItem = (id: number) => {
-    // Placeholder for view functionality
-    console.log(`View item with ID: ${id}`);
+    const data = getCurrentData();
+    const item = data.find((item: any) => item.id === id);
+    if (item) {
+      setViewingItem(item);
+      setShowDetailModal(true);
+    }
   };
 
   const handleEditItem = (id: number) => {
@@ -392,7 +400,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Modern Navigation Bar */}
-      <nav className="w-full bg-white/80 backdrop-blur-md border-b border-white/20 shadow-lg shadow-black/5 px-8 py-4 sticky top-0 z-50">
+      <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-8 py-4 sticky top-0 z-50">
         {/* Left: Logo and App Name */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -406,10 +414,10 @@ export default function AdminDashboard() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-900 font-bold text-xl tracking-tight">
-                Service<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Finder</span>
+              <span className="text-white font-bold text-xl tracking-tight">
+                Service<span className="text-[#7919e6]">Finder</span>
               </span>
-              <span className="text-xs text-gray-500 font-medium">Admin Portal</span>
+              <span className="text-xs text-gray-300 font-medium">Admin Portal</span>
             </div>
           </div>
           
@@ -421,20 +429,20 @@ export default function AdminDashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />            
                 </svg>
               </div>            
-              <span className="text-gray-700 font-medium text-sm">{(session.user as any).name || (session.user as any).email}</span>          
+              <span className="text-white font-medium text-sm">{(session.user as any).name || (session.user as any).email}</span>          
             </div>
             
-            <button
+              <button
               className="flex items-center justify-center w-10 h-10 bg-red-500/10 hover:bg-red-500/20 text-red-600 rounded-full transition-all duration-200 hover:scale-105 border border-red-200/50"
-              onClick={() => router.push('/api/auth/signout')}
+                onClick={() => router.push('/api/auth/signout')}
               title="Logout"
-            >
+              >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
               </svg>
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
       </nav>
 
       {/* Modern Header Section */}
@@ -467,8 +475,8 @@ export default function AdminDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
               Active users
-            </div>
-          </div>
+        </div>
+      </div>
 
           <div className="group relative bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/30 shadow-lg shadow-green-500/10 hover:shadow-green-500/20 transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-center justify-between">
@@ -622,7 +630,7 @@ export default function AdminDashboard() {
               </button>
             </nav>
           </div>
-        </div>
+          </div>
 
         {/* Table Content */}
         <AdminTable
@@ -631,6 +639,7 @@ export default function AdminDashboard() {
           onDelete={getCurrentDeleteHandler()}
           onEdit={handleEditItem}
           onView={handleViewItem}
+          onRowClick={handleViewItem}
         />
 
         {/* Edit Modal */}
@@ -642,6 +651,18 @@ export default function AdminDashboard() {
             onClose={() => {
               setShowEditModal(false);
               setEditingItem(null);
+            }}
+          />
+        )}
+
+        {/* Detail Modal */}
+        {showDetailModal && viewingItem && (
+          <DetailModal
+            type={activeTab}
+            item={viewingItem}
+            onClose={() => {
+              setShowDetailModal(false);
+              setViewingItem(null);
             }}
           />
         )}
@@ -672,7 +693,7 @@ function EditModal({ type, item, onSave, onClose }: {
       case 'users':
         return (
           <>
-            <div>
+              <div>
               <label className={labelClass}>Username</label>
               <input
                 type="text"
@@ -682,7 +703,7 @@ function EditModal({ type, item, onSave, onClose }: {
                 placeholder="Enter username"
               />
             </div>
-            <div>
+                              <div>
               <label className={labelClass}>Email</label>
               <input
                 type="email"
@@ -691,7 +712,7 @@ function EditModal({ type, item, onSave, onClose }: {
                 className={inputClass}
                 placeholder="Enter email address"
               />
-            </div>
+                                </div>
             <div>
               <label className={labelClass}>Name</label>
               <input
@@ -701,7 +722,7 @@ function EditModal({ type, item, onSave, onClose }: {
                 className={inputClass}
                 placeholder="Enter full name"
               />
-            </div>
+                                </div>
           </>
         );
       case 'providers':
@@ -716,7 +737,7 @@ function EditModal({ type, item, onSave, onClose }: {
                 className={inputClass}
                 placeholder="Enter username"
               />
-            </div>
+                              </div>
             <div>
               <label className={labelClass}>Email</label>
               <input
@@ -726,7 +747,7 @@ function EditModal({ type, item, onSave, onClose }: {
                 className={inputClass}
                 placeholder="Enter email address"
               />
-            </div>
+                            </div>
             <div>
               <label className={labelClass}>Name</label>
               <input
@@ -755,6 +776,16 @@ function EditModal({ type, item, onSave, onClose }: {
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className={inputClass}
                 placeholder="Enter phone number"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Shop Location</label>
+              <input
+                type="text"
+                value={formData.address || ''}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                className={inputClass}
+                placeholder="Enter shop address"
               />
             </div>
           </>
@@ -829,6 +860,16 @@ function EditModal({ type, item, onSave, onClose }: {
                 value={formData.customerPhone || ''}
                 onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
                 className="w-full p-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Booking Location</label>
+              <input
+                type="text"
+                value={formData.customerAddress || ''}
+                onChange={(e) => setFormData({ ...formData, customerAddress: e.target.value })}
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter customer address"
               />
             </div>
             <div className="mb-4">
@@ -911,15 +952,15 @@ function EditModal({ type, item, onSave, onClose }: {
             </h2>
             <p className="text-gray-600 text-sm mt-1">Update the information below</p>
           </div>
-          <button
+                            <button
             onClick={onClose}
             className="w-10 h-10 bg-gray-100/80 hover:bg-red-100/80 text-gray-600 hover:text-red-600 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
-          >
+                            >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
-        </div>
+                            </button>
+                </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           {renderFormFields()}
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200/50">
@@ -936,8 +977,343 @@ function EditModal({ type, item, onSave, onClose }: {
             >
               Save Changes
             </button>
-          </div>
+              </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+// Detail Modal Component
+function DetailModal({ type, item, onClose }: {
+  type: string;
+  item: any;
+  onClose: () => void;
+}) {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatCurrency = (amount: number) => {
+    return `RM ${amount.toFixed(2)}`;
+  };
+
+  const renderDetailContent = () => {
+    switch (type) {
+      case 'users':
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">User ID</label>
+                <p className="text-gray-900 font-medium">{item.id}</p>
+              </div>
+                              <div>
+                <label className="text-sm font-semibold text-gray-600">Username</label>
+                <p className="text-gray-900 font-medium">{item.username}</p>
+                                </div>
+                                </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Full Name</label>
+              <p className="text-gray-900 font-medium">{item.name || 'Not provided'}</p>
+                              </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Email Address</label>
+              <p className="text-gray-900 font-medium">{item.email}</p>
+                            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Account Created</label>
+              <p className="text-gray-900 font-medium">{formatDate(item.createdAt)}</p>
+                </div>
+          </div>
+        );
+      case 'providers':
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Provider ID</label>
+                <p className="text-gray-900 font-medium">{item.id}</p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Username</label>
+                <p className="text-gray-900 font-medium">{item.username}</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Full Name</label>
+              <p className="text-gray-900 font-medium">{item.name || 'Not provided'}</p>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Email Address</label>
+              <p className="text-gray-900 font-medium">{item.email}</p>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Service Type</label>
+              <div className="inline-block bg-gradient-to-r from-green-100 to-blue-100 border border-green-300 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                {item.serviceType}
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Phone Number</label>
+              <p className="text-gray-900 font-medium">{item.phone || 'Not provided'}</p>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Shop Location</label>
+              <p className="text-gray-900 font-medium">{item.address || 'Not provided'}</p>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Account Created</label>
+              <p className="text-gray-900 font-medium">{formatDate(item.createdAt)}</p>
+            </div>
+          </div>
+        );
+      case 'bookings':
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Booking ID</label>
+                <p className="text-gray-900 font-medium">{item.id}</p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Status</label>
+                <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                  item.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                  item.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
+                  item.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                  item.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {item.status}
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Customer Information</label>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-900 font-medium">{item.customerName}</p>
+                <p className="text-gray-600 text-sm">{item.customerEmail}</p>
+                <p className="text-gray-600 text-sm">{item.customerPhone}</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Service</label>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-900 font-medium">{item.service.name}</p>
+                <p className="text-gray-600 text-sm">Provider: {item.service.provider.name || item.service.provider.username}</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Booking Location</label>
+              <p className="text-gray-900 font-medium">{item.customerAddress || 'Not provided'}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Scheduled Date</label>
+                <p className="text-gray-900 font-medium">{formatDate(item.scheduledDate)}</p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Time</label>
+                <p className="text-gray-900 font-medium">{item.scheduledTime}</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Total Amount</label>
+              <p className="text-gray-900 font-bold text-lg">{formatCurrency(item.totalAmount)}</p>
+            </div>
+            {item.notes && (
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Notes</label>
+                <p className="text-gray-900 font-medium">{item.notes}</p>
+              </div>
+            )}
+              <div>
+              <label className="text-sm font-semibold text-gray-600">Booking Created</label>
+              <p className="text-gray-900 font-medium">{formatDate(item.createdAt)}</p>
+            </div>
+          </div>
+        );
+      case 'services':
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+                            <div>
+                <label className="text-sm font-semibold text-gray-600">Service ID</label>
+                <p className="text-gray-900 font-medium">{item.id}</p>
+                              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Category</label>
+                <div className="inline-block bg-gradient-to-r from-purple-100 to-pink-100 border border-purple-300 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                  {item.category}
+                              </div>
+                            </div>
+            </div>
+                            <div>
+              <label className="text-sm font-semibold text-gray-600">Service Name</label>
+              <p className="text-gray-900 font-bold text-lg">{item.name}</p>
+                            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Description</label>
+              <p className="text-gray-900 font-medium">{item.description}</p>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Price</label>
+              <p className="text-gray-900 font-bold text-lg">{formatCurrency(item.price)}</p>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Service Provider</label>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-900 font-medium">{item.provider.name || item.provider.username}</p>
+                <p className="text-gray-600 text-sm">{item.provider.email}</p>
+                <p className="text-gray-600 text-sm">Service Type: {item.provider.serviceType}</p>
+              </div>
+            </div>
+            {item.imageUrl && (
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Service Image</label>
+                <img 
+                  src={item.imageUrl} 
+                  alt={item.name}
+                  className="w-full h-48 object-cover rounded-lg border"
+                />
+              </div>
+            )}
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Service Created</label>
+              <p className="text-gray-900 font-medium">{formatDate(item.createdAt)}</p>
+            </div>
+          </div>
+        );
+      case 'reviews':
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Review ID</label>
+                <p className="text-gray-900 font-medium">{item.id}</p>
+              </div>
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Rating</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-900 font-bold text-lg">{item.rating}</span>
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-5 h-5 ${i < item.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                      </svg>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Customer</label>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-900 font-medium">{item.customer.name || item.customer.username}</p>
+                <p className="text-gray-600 text-sm">{item.customer.email}</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Service Provider</label>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-900 font-medium">{item.service.provider.name || item.service.provider.username}</p>
+                <p className="text-gray-600 text-sm">{item.service.provider.email}</p>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Service</label>
+              <p className="text-gray-900 font-medium">{item.service.name}</p>
+            </div>
+            {item.comment && (
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Customer Comment</label>
+                <div className="bg-blue-50 p-3 rounded-lg border-l-4 border-blue-400">
+                  <p className="text-gray-900 font-medium">{item.comment}</p>
+                </div>
+              </div>
+            )}
+            {item.providerComment && (
+              <div>
+                <label className="text-sm font-semibold text-gray-600">Provider Response</label>
+                <div className="bg-green-50 p-3 rounded-lg border-l-4 border-green-400">
+                  <p className="text-gray-900 font-medium">{item.providerComment}</p>
+                </div>
+              </div>
+            )}
+                            <div>
+              <label className="text-sm font-semibold text-gray-600">Booking Information</label>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <p className="text-gray-600 text-sm">Booking ID: {item.booking.id}</p>
+                <p className="text-gray-600 text-sm">Status: {item.booking.status}</p>
+                <p className="text-gray-600 text-sm">Date: {formatDate(item.booking.scheduledDate)}</p>
+                              </div>
+                              </div>
+            <div>
+              <label className="text-sm font-semibold text-gray-600">Review Created</label>
+              <p className="text-gray-900 font-medium">{formatDate(item.createdAt)}</p>
+                            </div>
+          </div>
+        );
+      default:
+        return <p>No details available</p>;
+    }
+  };
+
+  const getModalTitle = () => {
+    switch (type) {
+      case 'users': return 'User Details';
+      case 'providers': return 'Service Provider Details';
+      case 'bookings': return 'Booking Details';
+      case 'services': return 'Service Details';
+      case 'reviews': return 'Review Details';
+      default: return 'Details';
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white/95 backdrop-blur-md rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-white/20">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-purple-900 bg-clip-text text-transparent">
+              {getModalTitle()}
+            </h2>
+            <p className="text-gray-600 text-sm mt-1">Complete information and details</p>
+          </div>
+                            <button
+            onClick={onClose}
+            className="w-10 h-10 bg-gray-100/80 hover:bg-red-100/80 text-gray-600 hover:text-red-600 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
+                            >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+                            </button>
+                </div>
+        
+        <div className="space-y-6">
+          {renderDetailContent()}
+              </div>
+        
+        <div className="flex justify-end pt-6 border-t border-gray-200/50 mt-6">
+          <button
+            onClick={onClose}
+            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-medium shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all duration-200 hover:scale-105"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );

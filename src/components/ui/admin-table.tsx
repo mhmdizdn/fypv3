@@ -29,6 +29,7 @@ interface ServiceProvider {
   name: string | null;
   serviceType: string;
   phone: string | null;
+  address: string | null;
   createdAt: string;
 }
 
@@ -37,6 +38,7 @@ interface Booking {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  customerAddress: string;
   scheduledDate: string;
   scheduledTime: string;
   status: string;
@@ -115,6 +117,7 @@ type AdminTableProps = {
   onDelete?: (id: number) => void;
   onEdit?: (id: number) => void;
   onView?: (id: number) => void;
+  onRowClick?: (id: number) => void;
 }
 
 const getStatusColor = (status: string) => {
@@ -132,7 +135,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableProps) {
+export function AdminTable({ type, data, onDelete, onEdit, onView, onRowClick }: AdminTableProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [sortColumn, setSortColumn] = useState<string>("id")
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
@@ -219,6 +222,9 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
             <TableHead className="cursor-pointer" onClick={() => handleSort("phone")}>
               Phone {sortColumn === "phone" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
             </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("address")}>
+              Shop Location {sortColumn === "address" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
+            </TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
               Created {sortColumn === "createdAt" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
             </TableHead>
@@ -241,6 +247,9 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
             </TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
               Status {sortColumn === "status" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("customerAddress")}>
+              Booking Location {sortColumn === "customerAddress" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
             </TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("totalAmount")}>
               Amount {sortColumn === "totalAmount" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
@@ -279,8 +288,8 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
             <TableHead className="cursor-pointer" onClick={() => handleSort("customer.name")}>
               Customer {sortColumn === "customer.name" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
             </TableHead>
-            <TableHead className="cursor-pointer" onClick={() => handleSort("service.name")}>
-              Service {sortColumn === "service.name" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
+            <TableHead className="cursor-pointer" onClick={() => handleSort("service.provider.name")}>
+              Provider {sortColumn === "service.provider.name" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
             </TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("rating")}>
               Rating {sortColumn === "rating" && <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>}
@@ -301,7 +310,11 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
         case 'users':
           const user = item as User;
           return (
-            <TableRow key={user.id} className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-gray-100/50">
+            <TableRow 
+              key={user.id} 
+              className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-gray-100/50 cursor-pointer" 
+              onClick={() => onRowClick && onRowClick(user.id)}
+            >
               <TableCell className="font-semibold text-gray-900 py-4">
                 {user.id}
               </TableCell>
@@ -315,7 +328,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onEdit(user.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(user.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200"
                     >
                       <Pencil className="h-4 w-4" />
@@ -325,7 +341,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onDelete(user.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(user.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 transition-colors duration-200"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -338,7 +357,11 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
         case 'providers':
           const provider = item as ServiceProvider;
           return (
-            <TableRow key={provider.id} className="hover:bg-green-50/50 transition-colors duration-200 border-b border-gray-100/50">
+            <TableRow 
+              key={provider.id} 
+              className="hover:bg-green-50/50 transition-colors duration-200 border-b border-gray-100/50 cursor-pointer" 
+              onClick={() => onRowClick && onRowClick(provider.id)}
+            >
               <TableCell className="font-semibold text-gray-900 py-4">
                 {provider.id}
               </TableCell>
@@ -350,6 +373,11 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                 </Badge>
               </TableCell>
               <TableCell className="text-gray-700 py-4">{provider.phone || <span className="text-gray-400 italic">N/A</span>}</TableCell>
+              <TableCell className="text-gray-700 py-4 max-w-xs">
+                <div className="truncate" title={provider.address || "N/A"}>
+                  {provider.address || <span className="text-gray-400 italic">N/A</span>}
+                </div>
+              </TableCell>
               <TableCell className="text-gray-600 py-4">{formatDate(provider.createdAt)}</TableCell>
               <TableCell className="py-4">
                 <div className="flex gap-2">
@@ -357,7 +385,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onEdit(provider.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(provider.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200"
                     >
                       <Pencil className="h-4 w-4" />
@@ -367,7 +398,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onDelete(provider.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(provider.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 transition-colors duration-200"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -380,7 +414,11 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
         case 'bookings':
           const booking = item as Booking;
           return (
-            <TableRow key={booking.id} className="hover:bg-orange-50/50 transition-colors duration-200 border-b border-gray-100/50">
+            <TableRow 
+              key={booking.id} 
+              className="hover:bg-orange-50/50 transition-colors duration-200 border-b border-gray-100/50 cursor-pointer" 
+              onClick={() => onRowClick && onRowClick(booking.id)}
+            >
               <TableCell className="font-semibold text-gray-900 py-4">
                 {booking.id}
               </TableCell>
@@ -395,6 +433,11 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
               <TableCell className="py-4">
                 <Badge className={`${getStatusColor(booking.status)} font-medium`}>{booking.status}</Badge>
               </TableCell>
+              <TableCell className="text-gray-700 py-4 max-w-xs">
+                <div className="truncate" title={booking.customerAddress || "N/A"}>
+                  {booking.customerAddress || <span className="text-gray-400 italic">N/A</span>}
+                </div>
+              </TableCell>
               <TableCell className="text-gray-800 font-semibold py-4">{formatCurrency(booking.totalAmount)}</TableCell>
               <TableCell className="py-4">
                 <div className="flex gap-2">
@@ -402,7 +445,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onEdit(booking.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(booking.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200"
                     >
                       <Pencil className="h-4 w-4" />
@@ -412,7 +458,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onDelete(booking.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(booking.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 transition-colors duration-200"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -425,7 +474,11 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
         case 'services':
           const service = item as Service;
           return (
-            <TableRow key={service.id} className="hover:bg-purple-50/50 transition-colors duration-200 border-b border-gray-100/50">
+            <TableRow 
+              key={service.id} 
+              className="hover:bg-purple-50/50 transition-colors duration-200 border-b border-gray-100/50 cursor-pointer" 
+              onClick={() => onRowClick && onRowClick(service.id)}
+            >
               <TableCell className="font-semibold text-gray-900 py-4">
                 {service.id}
               </TableCell>
@@ -444,7 +497,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onEdit(service.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(service.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200"
                     >
                       <Pencil className="h-4 w-4" />
@@ -454,7 +510,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onDelete(service.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(service.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 transition-colors duration-200"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -467,12 +526,16 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
         case 'reviews':
           const review = item as Review;
           return (
-            <TableRow key={review.id} className="hover:bg-yellow-50/50 transition-colors duration-200 border-b border-gray-100/50">
+            <TableRow 
+              key={review.id} 
+              className="hover:bg-yellow-50/50 transition-colors duration-200 border-b border-gray-100/50 cursor-pointer" 
+              onClick={() => onRowClick && onRowClick(review.id)}
+            >
               <TableCell className="font-semibold text-gray-900 py-4">
                 {review.id}
               </TableCell>
               <TableCell className="text-gray-800 font-medium py-4">{review.customer.name || review.customer.username}</TableCell>
-              <TableCell className="text-gray-700 py-4">{review.service.name}</TableCell>
+              <TableCell className="text-gray-700 py-4">{review.service.provider.name || review.service.provider.username}</TableCell>
               <TableCell className="py-4">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-800 font-semibold text-sm">{review.rating}</span>
@@ -507,7 +570,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onEdit(review.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(review.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-blue-100 hover:text-blue-600 transition-colors duration-200"
                     >
                       <Pencil className="h-4 w-4" />
@@ -517,7 +583,10 @@ export function AdminTable({ type, data, onDelete, onEdit, onView }: AdminTableP
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={() => onDelete(review.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(review.id);
+                      }}
                       className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600 transition-colors duration-200"
                     >
                       <Trash2 className="h-4 w-4" />

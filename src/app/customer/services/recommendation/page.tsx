@@ -67,7 +67,7 @@ function ServiceNavbar() {
   };
 
   return (
-    <nav className="w-full bg-[#111] border-b border-black/30 px-6 py-3 flex items-center justify-between">
+          <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
       {/* Left: Logo and App Name */}
       <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">
@@ -378,7 +378,7 @@ export default function ServiceRecommendationPage() {
   return (
     <>
       <ServiceNavbar />
-      <div className="flex min-h-screen bg-[#fafafa]">
+      <div className="flex min-h-screen bg-[#fafafa] pt-20">
         {/* Sidebar Filters */}
         <aside className="w-60 bg-white border-r border-gray-200 p-6 hidden md:block">
           <h2 className="text-2xl font-bold mb-6">Filters</h2>

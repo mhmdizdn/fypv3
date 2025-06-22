@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
         name: true,
         serviceType: true,
         phone: true,
+        address: true,
         createdAt: true,
       },
       orderBy: {

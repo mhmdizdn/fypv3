@@ -253,7 +253,7 @@ export default function ProviderDashboard() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Navigation Bar */}
-      <nav className="w-full bg-[#111] border-b border-black/30 px-6 py-3 flex items-center justify-between">
+      <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
         {/* Left: Logo and App Name */}
         <div className="flex items-center gap-1">
           <div className="w-8 h-8 flex items-center justify-center">
@@ -331,7 +331,7 @@ export default function ProviderDashboard() {
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pt-24">
         {/* Profile Completion Warning */}
         {(!provider.phone || !provider.latitude || !provider.longitude) && (
           <div className="mb-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-lg">

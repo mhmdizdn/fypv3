@@ -4,7 +4,7 @@ import { Button } from "./button";
 
 export function Navbar() {
   return (
-    <nav className="w-full bg-[#111] border-b border-black/30 px-6 py-3 flex items-center justify-between">
+    <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
       {/* Left: Logo */}
       <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">

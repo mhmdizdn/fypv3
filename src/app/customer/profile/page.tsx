@@ -77,7 +77,7 @@ export default function UserProfilePage() {
 
   return (
     <>
-      <nav className="w-full bg-[#111] border-b border-black/30 px-6 py-3 flex items-center justify-between">
+      <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
       {/* Left: Logo and App Name */}
       <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">
@@ -144,7 +144,7 @@ export default function UserProfilePage() {
       </div>
     </nav>
     {/* Profile Page */}
-      <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow">
+      <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow" style={{ marginTop: "120px" }}>
         <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
           My profile
           <span title="Profile information">

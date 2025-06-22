@@ -6,7 +6,7 @@ export default function IndexLayout({ children }: { children: React.ReactNode })
   return (
     <SessionWrapper>
       <MapProvider>
-        {children}
+      {children}
       </MapProvider>
     </SessionWrapper>
   );

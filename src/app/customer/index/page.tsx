@@ -1,5 +1,5 @@
 'use client';
-import { Footer } from "@/components/ui/footer";
+
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -82,7 +82,7 @@ export default function IndexPage() {
   return (
     <>
       {/* Navigation */}
-      <nav className="w-full bg-[#111] border-b border-black/30 px-6 py-3 flex items-center justify-between">
+      <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
         <div className="flex items-center gap-1">
           <div className="w-8 h-8 flex items-center justify-center">
             <img
@@ -147,7 +147,7 @@ export default function IndexPage() {
       </nav>
 
       {/* Main Content */}
-      <main className="flex flex-col items-center justify-center min-h-[70vh] bg-[#fafafa] relative overflow-hidden">
+      <main className="flex flex-col items-center justify-center min-h-[70vh] bg-[#fafafa] relative overflow-hidden pt-20">
         <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 text-center mt-16 mb-6 leading-tight">
           Find trusted services near you,<br />delivered to your door
         </h1>
@@ -166,7 +166,7 @@ export default function IndexPage() {
               />
               <button
                 type="button"
-                className="px-3 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="px-3 py-3 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-lg transition-colors"
                 onClick={handleAddressSearch}
                 disabled={isLoading || !address.trim()}
                 title="Search address"
@@ -177,7 +177,7 @@ export default function IndexPage() {
               </button>
             </div>
             
-            <Button variant="gradient" className="px-8 py-3 rounded-lg font-bold text-lg" disabled={!address.trim()}>
+            <Button variant="gradient" className="px-8 py-3 cursor-pointer rounded-lg font-bold text-lg" disabled={!address.trim()}>
               View Services
             </Button>
           </div>
@@ -221,7 +221,7 @@ export default function IndexPage() {
                   type="button"
                   onClick={() => window.location.reload()}
                   disabled={isLoading}
-                  className="p-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+                  className="p-2 bg-gray-100 cursor-pointer hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
                   title="Refresh page"
                 >
                   <svg 
@@ -269,8 +269,6 @@ export default function IndexPage() {
           )}
         </form>
       </main>
-      
-      <Footer />
     </>
   );
 }
