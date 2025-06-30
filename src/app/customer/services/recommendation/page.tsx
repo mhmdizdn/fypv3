@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { Navbar } from '@/components/ui/navbar';
 import { useSearchParams } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
@@ -46,7 +46,8 @@ interface Review {
   };
 }
 
-function ServiceNavbar() {
+// Create a component that uses useSearchParams
+function ServiceNavbarContent() {
   const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
   
@@ -69,7 +70,7 @@ function ServiceNavbar() {
   };
 
   return (
-          <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
+    <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
       {/* Left: Logo and App Name */}
       <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">
@@ -134,7 +135,20 @@ function ServiceNavbar() {
   );
 }
 
-export default function ServiceRecommendationPage() {
+// Wrapped ServiceNavbar with Suspense
+function ServiceNavbar() {
+  return (
+    <Suspense fallback={
+      <div className="w-full h-16 bg-black/20 backdrop-blur-md border-b border-white/10 fixed top-0 z-50 flex items-center justify-center">
+        <div className="animate-pulse">Loading...</div>
+      </div>
+    }>
+      <ServiceNavbarContent />
+    </Suspense>
+  );
+}
+
+function ServiceRecommendationContent() {
   const [sort, setSort] = useState('nearby');
   const [quickFilter, setQuickFilter] = useState('');
   const [offers, setOffers] = useState<{vouchers: boolean, deals: boolean}>({vouchers: false, deals: false});
@@ -815,6 +829,25 @@ export default function ServiceRecommendationPage() {
           customerCoordinates={userCoordinates}
         />
       )}
+    </>
+  );
+}
+
+// Main component that uses Suspense
+export default function ServiceRecommendationPage() {
+  return (
+    <>
+      <ServiceNavbar />
+      <div className="flex min-h-screen bg-[#fafafa] pt-20">
+        <Suspense fallback={
+          <div className="w-full text-center py-10">
+            <div className="w-12 h-12 border-4 border-[#7919e6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        }>
+          <ServiceRecommendationContent />
+        </Suspense>
+      </div>
     </>
   );
 }

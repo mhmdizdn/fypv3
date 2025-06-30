@@ -2,19 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { SessionUser } from "@/types";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
+    const userSession = session?.user as SessionUser | undefined;
 
-    if (!session || (session.user as any).userType !== "admin") {
+    if (!session || userSession?.userType !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const providerId = parseInt(params.id);
+    const providerId = parseInt(context.params.id);
     const body = await request.json();
     const { username, email, name, serviceType, phone } = body;
 
@@ -38,16 +40,17 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
+    const userSession = session?.user as SessionUser | undefined;
 
-    if (!session || (session.user as any).userType !== "admin") {
+    if (!session || userSession?.userType !== "admin") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const providerId = parseInt(params.id);
+    const providerId = parseInt(context.params.id);
 
     // Delete related records first
     await prisma.notification.deleteMany({
