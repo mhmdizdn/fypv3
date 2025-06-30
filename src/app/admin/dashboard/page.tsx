@@ -398,46 +398,76 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Modern Navigation Bar */}
-      <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-8 py-4 sticky top-0 z-50">
-        {/* Left: Logo and App Name */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-              <img
-                src="/servicefinder-logo.png"
-                alt="ServiceFinder Logo"
-                width={24}
-                height={24}
-                className="object-contain brightness-0 invert"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-white font-bold text-xl tracking-tight">
-                Service<span className="text-[#7919e6]">Finder</span>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Dark gradient background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
+      
+      {/* Top gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #1e1b4b, #312e81)`
+          }}
+          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+      
+      {/* Bottom gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #0f172a, #1e293b)`
+          }}
+          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 opacity-15 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+      {/* Navigation */}
+      <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
+        <div className="flex items-center gap-1">
+          <div className="w-8 h-8 flex items-center justify-center">
+            <img
+              src="/servicefinder-logo.png"
+              alt="ServiceFinder Logo"
+              width={32}
+              height={32}
+              className="object-contain"
+            />
+          </div>
+          <span className="text-white font-extrabold text-2xl tracking-tight">
+            Service<span className="text-[#7919e6]">Finder</span>
+          </span>
+        </div>
+        
+        <div className="hidden md:flex items-center gap-6 text-white">
+          <span className="text-[#7919e6] font-semibold">
+              Admin Dashboard
               </span>
-              <span className="text-xs text-gray-300 font-medium">Admin Portal</span>
-            </div>
+        </div>
+        
+        <div className="flex items-center gap-6 text-gray-700 text-base">
+          <div className="flex items-center gap-1 text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>{(session?.user as any)?.name || (session?.user as any)?.email || "Admin"}</span>
           </div>
           
-          {/* Right: User and Settings */}        
-          <div className="flex items-center gap-4">          
-            <div className="flex items-center gap-3 bg-white/60 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30 shadow-sm">            
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-white">              
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />            
-                </svg>
-              </div>            
-              <span className="text-white font-medium text-sm">{(session.user as any).name || (session.user as any).email}</span>          
-            </div>
-            
+          <div className="relative">
               <button
-              className="flex items-center justify-center w-10 h-10 bg-red-500/10 hover:bg-red-500/20 text-red-600 rounded-full transition-all duration-200 hover:scale-105 border border-red-200/50"
+              className="hover:text-[#E91E63] cursor-pointer flex items-center text-white"
                 onClick={() => router.push('/api/auth/signout')}
-              title="Logout"
               >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
               </svg>
               </button>
@@ -446,12 +476,12 @@ export default function AdminDashboard() {
       </nav>
 
       {/* Modern Header Section */}
-      <div className="max-w-7xl mx-auto px-8 pt-12 pb-8">
+      <div className="max-w-7xl mx-auto px-8 pt-24 pb-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-blue-900 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl font-bold text-gray-100 mb-4">
             Admin Dashboard
           </h1>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Manage your platform with modern tools and real-time insights
           </p>
         </div>

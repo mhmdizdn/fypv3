@@ -6,7 +6,11 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: ["localhost:3000"]
     },
-  }
+  },
+  output: 'standalone',
+  images: {
+    domains: ['localhost'],
+  },
 };
 
 export default nextConfig;

@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -14,7 +14,7 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const bookingId = parseInt(params.id);
+    const bookingId = parseInt(context.params.id);
     const body = await request.json();
     const { customerName, customerEmail, customerPhone, status, totalAmount } = body;
 
@@ -63,7 +63,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -72,7 +72,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const bookingId = parseInt(params.id);
+    const bookingId = parseInt(context.params.id);
 
     // Delete related records first
     await prisma.review.deleteMany({

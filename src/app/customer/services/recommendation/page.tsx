@@ -37,7 +37,9 @@ interface Review {
   id: number;
   rating: number;
   comment: string | null;
+  providerComment: string | null;
   createdAt: string;
+  updatedAt?: string;
   customer: {
     name: string | null;
     username: string;

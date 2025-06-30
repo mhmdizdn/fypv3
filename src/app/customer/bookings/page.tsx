@@ -340,11 +340,44 @@ export default function CustomerBookingsPage() {
   return (
     <>
       <CustomerNavbar />
-      <div className="min-h-screen bg-gray-50 pt-20">
+      <div className="min-h-screen relative overflow-hidden pt-20">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
+        
+        {/* Top gradient overlay */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+        >
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+              background: `linear-gradient(to top right, #1e1b4b, #312e81)`
+            }}
+            className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+          />
+        </div>
+        
+        {/* Bottom gradient overlay */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+        >
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+              background: `linear-gradient(to top right, #0f172a, #1e293b)`
+            }}
+            className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 opacity-15 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+          />
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-            <p className="mt-2 text-gray-600">Manage and track your service bookings</p>
+            <h1 className="text-3xl font-bold text-gray-100">My Bookings</h1>
+            <p className="mt-2 text-gray-400">Manage and track your service bookings</p>
           </div>
 
           {error && (
@@ -371,7 +404,7 @@ export default function CustomerBookingsPage() {
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${
                       filter === tab.key
                         ? 'border-[#7919e6] text-[#7919e6]'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'
                     }`}
                   >
                     {tab.label}
@@ -386,8 +419,8 @@ export default function CustomerBookingsPage() {
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No bookings found</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <h3 className="mt-2 text-sm font-medium text-gray-200">No bookings found</h3>
+              <p className="mt-1 text-sm text-gray-400">
                 {filter === 'all' ? 'You haven\'t made any bookings yet.' : `No ${filter.toLowerCase()} bookings found.`}
               </p>
               <div className="mt-6">
@@ -401,15 +434,15 @@ export default function CustomerBookingsPage() {
           ) : (
             <div className="grid gap-6">
               {filteredBookings.map((booking) => (
-                <div key={booking.id} className="bg-white rounded-lg shadow-md p-6">
+                <div key={booking.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{booking.service.name}</h3>
-                      <p className="text-gray-600">{booking.service.description}</p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Provider: {booking.service.provider.name || 'Service Provider'}
-                      </p>
-                    </div>
+                                          <div>
+                        <h3 className="text-xl font-semibold text-gray-100">{booking.service.name}</h3>
+                        <p className="text-gray-300">{booking.service.description}</p>
+                        <p className="text-sm text-gray-400 mt-1">
+                          Provider: {booking.service.provider.name || 'Service Provider'}
+                        </p>
+                      </div>
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
                       {booking.status.replace('_', ' ')}
                     </span>
@@ -417,54 +450,54 @@ export default function CustomerBookingsPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">Booking Details</h4>
-                      <p className="text-sm text-gray-600">Date: {formatDate(booking.scheduledDate)}</p>
-                      <p className="text-sm text-gray-600">Time: {booking.scheduledTime}</p>
-                      <p className="text-sm text-gray-600">Amount: RM {booking.totalAmount.toFixed(2)}</p>
+                      <h4 className="font-medium text-gray-200 mb-2">Booking Details</h4>
+                      <p className="text-sm text-gray-300">Date: {formatDate(booking.scheduledDate)}</p>
+                      <p className="text-sm text-gray-300">Time: {booking.scheduledTime}</p>
+                      <p className="text-sm text-gray-300">Amount: RM {booking.totalAmount.toFixed(2)}</p>
                       {booking.service.provider.phone && (
                         <div>
-                          <p className="text-sm font-medium text-gray-700">Provider Contact</p>
-                          <p className="text-sm text-gray-900">{booking.service.provider.phone}</p>
+                          <p className="text-sm font-medium text-gray-300">Provider Contact</p>
+                          <p className="text-sm text-gray-200">{booking.service.provider.phone}</p>
                         </div>
                       )}
                     </div>
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-2">Service Location</h4>
+                      <h4 className="font-medium text-gray-200 mb-2">Service Location</h4>
                       {formatAddress(booking.customerAddress)}
                     </div>
                   </div>
 
                   {booking.notes && (
                     <div className="mb-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Notes</h4>
-                      <p className="text-sm text-gray-600">{booking.notes}</p>
+                      <h4 className="font-medium text-gray-200 mb-2">Notes</h4>
+                      <p className="text-sm text-gray-300">{booking.notes}</p>
                     </div>
                   )}
 
                   {/* Show existing review if available */}
                   {booking.review && (
-                    <div className="mb-4 bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-900 mb-2">Your Review</h4>
+                    <div className="mb-4 bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
+                      <h4 className="font-medium text-gray-200 mb-2">Your Review</h4>
                       <div className="flex items-center gap-2 mb-2">
                         {renderStars(booking.review.rating)}
-                        <span className="text-sm text-gray-600">
+                        <span className="text-sm text-gray-300">
                           ({booking.review.rating}/5)
                         </span>
                       </div>
                       {booking.review.comment && (
-                        <p className="text-sm text-gray-600 mb-2">{booking.review.comment}</p>
+                        <p className="text-sm text-gray-300 mb-2">{booking.review.comment}</p>
                       )}
-                      <p className="text-xs text-gray-500 mb-3">
+                      <p className="text-xs text-gray-400 mb-3">
                         Reviewed on {formatDate(booking.review.createdAt)}
                       </p>
                       
                       {/* Provider Response */}
                       {booking.review.providerComment && (
-                        <div className="bg-blue-50 border-l-4 border-[#7919e6] p-3 rounded">
-                          <h5 className="font-medium text-gray-900 mb-1">Provider Response:</h5>
-                          <p className="text-sm text-gray-700">{booking.review.providerComment}</p>
+                        <div className="bg-[#7919e6]/20 border-l-4 border-[#7919e6] p-3 rounded">
+                          <h5 className="font-medium text-gray-200 mb-1">Provider Response:</h5>
+                          <p className="text-sm text-gray-300">{booking.review.providerComment}</p>
                           {booking.review.updatedAt && (
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-gray-400 mt-2">
                               Responded on {formatDate(booking.review.updatedAt)}
                             </p>
                           )}
@@ -473,8 +506,8 @@ export default function CustomerBookingsPage() {
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-500">
+                                      <div className="flex justify-between items-center pt-4 border-t border-white/20">
+                    <p className="text-sm text-gray-400">
                       Booked on {formatDate(booking.createdAt)}
                     </p>
                     <div className="flex gap-2 flex-wrap">

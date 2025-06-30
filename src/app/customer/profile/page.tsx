@@ -143,12 +143,47 @@ export default function UserProfilePage() {
         </div>
       </div>
     </nav>
-    {/* Profile Page */}
-      <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded-lg shadow" style={{ marginTop: "120px" }}>
-        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+    {/* Main Content with Dark Background */}
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Dark gradient background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
+      
+      {/* Top gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #1e1b4b, #312e81)`
+          }}
+          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+      
+      {/* Bottom gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #0f172a, #1e293b)`
+          }}
+          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 opacity-15 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+
+      {/* Profile Page */}
+      <div className="max-w-2xl mx-auto mt-10 p-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-xl" style={{ marginTop: "120px" }}>
+        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2 text-gray-100">
           My profile
           <span title="Profile information">
-            <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 16v-4m0-4h.01" />
             </svg>
@@ -160,68 +195,68 @@ export default function UserProfilePage() {
         
         <div className="space-y-4 mb-8">
           <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
+            <label className="block text-sm font-medium mb-1 text-gray-300">Name</label>
             <input
               name="name"
               type="text"
               value={user.name}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2 bg-gray-100"
+              className="w-full border border-white/20 rounded px-3 py-2 bg-white/10 backdrop-blur-sm text-gray-200 placeholder-gray-400"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Username</label>
+            <label className="block text-sm font-medium mb-1 text-gray-300">Username</label>
             <input
               name="username"
               type="text"
               value={user.username}
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2 bg-gray-100"
+              className="w-full border border-white/20 rounded px-3 py-2 bg-white/10 backdrop-blur-sm text-gray-200 placeholder-gray-400"
             />
           </div>
         </div>
 
-        <hr className="my-6" />
+        <hr className="my-6 border-white/20" />
 
-        <h3 className="text-xl font-bold mb-2">Email</h3>
+        <h3 className="text-xl font-bold mb-2 text-gray-100">Email</h3>
         <div className="space-y-2 mb-8">
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium mb-1 text-gray-300">Email</label>
             <input 
               name="email"
               type="email" 
               value={user.email} 
               onChange={handleChange}
-              className="w-full border rounded px-3 py-2 bg-gray-100" 
+              className="w-full border border-white/20 rounded px-3 py-2 bg-white/10 backdrop-blur-sm text-gray-200 placeholder-gray-400" 
             />
-            <p className="text-xs text-gray-500 mt-1">Changing your email will require you to login again.</p>
+            <p className="text-xs text-gray-400 mt-1">Changing your email will require you to login again.</p>
           </div>
         </div>
 
-        <hr className="my-6" />
+        <hr className="my-6 border-white/20" />
 
-        <h3 className="text-xl font-bold mb-2">Password</h3>
+        <h3 className="text-xl font-bold mb-2 text-gray-100">Password</h3>
         <div className="space-y-2">
           <div>
-            <label className="block text-sm font-medium mb-1">Current password</label>
+            <label className="block text-sm font-medium mb-1 text-gray-300">Current password</label>
             <input 
               name="currentPassword"
               type="password" 
               value={user.currentPassword}
               onChange={handleChange}
               placeholder="Enter your current password" 
-              className="w-full border rounded px-3 py-2 bg-gray-100" 
+              className="w-full border border-white/20 rounded px-3 py-2 bg-white/10 backdrop-blur-sm text-gray-200 placeholder-gray-400" 
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">New password</label>
+            <label className="block text-sm font-medium mb-1 text-gray-300">New password</label>
             <input 
               name="newPassword"
               type="password" 
               value={user.newPassword}
               onChange={handleChange}
               placeholder="Enter your new password" 
-              className="w-full border rounded px-3 py-2 bg-gray-100" 
+              className="w-full border border-white/20 rounded px-3 py-2 bg-white/10 backdrop-blur-sm text-gray-200 placeholder-gray-400" 
             />
           </div>
         </div>
@@ -235,6 +270,7 @@ export default function UserProfilePage() {
           {saving ? 'Saving...' : 'Save Changes'}
         </Button>
       </div>
+    </div>
     </>
   );
 }
