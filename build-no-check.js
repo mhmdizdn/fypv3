@@ -51,6 +51,14 @@ NEXTAUTH_URL=http://localhost:3000`
     console.log("Created .env.local with build bypass settings");
   }
   
+  // Generate Prisma client before building
+  console.log("Generating Prisma client...");
+  execSync('npx prisma generate', {
+    stdio: 'inherit',
+    env: process.env
+  });
+  console.log("Prisma client generated successfully!");
+  
   // Run the build with many fallbacks
   execSync('npx next build', {
     stdio: 'inherit',

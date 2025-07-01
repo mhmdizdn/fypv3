@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "node build-no-check.js",
-    "vercel-build": "node build-no-check.js",
+    "vercel-build": "npx prisma generate && node build-no-check.js",
     "start": "next start",
     "lint": "next lint"
   },
