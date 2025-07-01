@@ -5,6 +5,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
+    // During build time, just return empty data to allow build to complete
+    if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
+      return NextResponse.json([]);
+    }
+    
     const session = await getServerSession(authOptions);
 
     if (!session || (session.user as any).userType !== "admin") {

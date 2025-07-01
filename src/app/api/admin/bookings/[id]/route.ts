@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { checkAdminAuth, validateId, createDefaultHandler } from "@/lib/api-helpers";
 
-// Add empty GET handler to help with route collection during build
-export async function GET() {
-  return createDefaultHandler();
+// Add empty GET handler that's build-safe
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  // During build time, this will be called with no real context
+  // Just return a default response to allow build to complete
+  return NextResponse.json({ message: "Method called during build" }, { status: 200 });
 }
 
 export async function PUT(
