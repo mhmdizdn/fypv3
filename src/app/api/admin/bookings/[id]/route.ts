@@ -1,20 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { checkAdminAuth, validateId, createDefaultHandler } from "@/lib/api-helpers";
+
+// Add empty GET handler to help with route collection during build
+export async function GET() {
+  return createDefaultHandler();
+}
 
 export async function PUT(
-  request: NextRequest,
-  context: { params: { id: string } }
+  request: NextRequest, 
+  { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || (session.user as any).userType !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Validate authentication
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) {
+      return authResult.response;
     }
-
-    const bookingId = parseInt(context.params.id);
+    
+    // Validate ID
+    const idResult = validateId(params);
+    if (!idResult.valid) {
+      return idResult.response;
+    }
+    
+    const bookingId = idResult.id;
     const body = await request.json();
     const { customerName, customerEmail, customerPhone, status, totalAmount } = body;
 
@@ -63,16 +73,22 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || (session.user as any).userType !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // Validate authentication
+    const authResult = await checkAdminAuth();
+    if (!authResult.authenticated) {
+      return authResult.response;
     }
-
-    const bookingId = parseInt(context.params.id);
+    
+    // Validate ID
+    const idResult = validateId(params);
+    if (!idResult.valid) {
+      return idResult.response;
+    }
+    
+    const bookingId = idResult.id;
 
     // Delete related records first
     await prisma.review.deleteMany({

@@ -10,11 +10,32 @@ process.env.NEXT_DISABLE_SOURCEMAPS = "true";
 process.env.NEXT_TELEMETRY_DISABLED = "true";
 process.env.NODE_OPTIONS = "--max_old_space_size=4096";
 
+// Database placeholder for build only
+process.env.DATABASE_URL = process.env.DATABASE_URL || "postgresql://placeholder:placeholder@localhost:5432/placeholder";
+process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || "placeholder-for-build-only";
+process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || "http://localhost:3000";
+
+// Helper function to create placeholder files
+const ensurePlaceholderForFile = (filePath, content) => {
+  // Skip if file exists
+  if (fs.existsSync(filePath)) return;
+  
+  // Create directory structure if it doesn't exist
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  
+  // Write placeholder file
+  console.log(`Creating placeholder for: ${filePath}`);
+  fs.writeFileSync(filePath, content);
+};
+
 // Execute the build
 try {
   console.log("Building with TypeScript checks disabled...");
   
-  // Create .env.local file if it doesn't exist to ensure our settings are picked up
+  // Create .env.local file if it doesn't exist
   const envPath = path.join(process.cwd(), '.env.local');
   if (!fs.existsSync(envPath)) {
     fs.writeFileSync(
@@ -22,12 +43,15 @@ try {
       `NEXT_SKIP_TYPE_CHECK=true
 NEXT_DISABLE_ESLINT=true
 NEXT_DISABLE_SOURCEMAPS=true
-NEXT_TELEMETRY_DISABLED=true`
+NEXT_TELEMETRY_DISABLED=true
+DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+NEXTAUTH_SECRET=placeholder-for-build-only
+NEXTAUTH_URL=http://localhost:3000`
     );
     console.log("Created .env.local with build bypass settings");
   }
   
-  // Run the build
+  // Run the build with many fallbacks
   execSync('npx next build', {
     stdio: 'inherit',
     env: {
