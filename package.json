@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "node build-no-check.js",
-    "vercel-build": "npx prisma generate && node build-no-check.js",
+    "build": "node cross-env-build.js",
+    "vercel-build": "node cross-env-build.js",
     "start": "next start",
     "lint": "next lint"
   },
