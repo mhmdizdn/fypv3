@@ -1,58 +1,42 @@
-version: '3.8'
-
 services:
-  # Next.js application
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    restart: always
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: servicefinder-db
     environment:
-      - DATABASE_URL=postgresql://postgres:din@db:5432/fyp
-      - NEXTAUTH_SECRET=Gj+Q7eWkhknTZ6C1PF+sANqih0lij1JtUwaoxwJk9uI=
-      - NEXTAUTH_URL=http://localhost:3000
-    depends_on:
-      - db
-    networks:
-      - app_network
-
-  # PostgreSQL database (if you're using Prisma with PostgreSQL)
-  db:
-    image: postgres:15
-    ports:
-      - "5432:5432"
-    restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=din
-      - POSTGRES_DB=fyp
+      POSTGRES_DB: fyp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: din
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app_network
-
-  # pgAdmin for database management
-  pgadmin:
-    image: dpage/pgadmin4:latest
     ports:
-      - "5050:80"
-    restart: always
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=izzuddin6595@gmail.com
-      - PGADMIN_DEFAULT_PASSWORD=udin6595
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      - db
+      - "5432:5432"
     networks:
-      - app_network
+      - servicefinder-network
+    restart: unless-stopped
 
-networks:
-  app_network:
-    driver: bridge
+  # Next.js Application
+  app:
+    build: .
+    container_name: servicefinder-app
+    environment:
+      DATABASE_URL: "postgresql://postgres:din@postgres:5432/fyp"
+      NEXTAUTH_SECRET: "your-nextauth-secret-key-here-change-this"
+      NEXTAUTH_URL: "http://188.166.219.104:3000"
+      NODE_ENV: "production"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - servicefinder-network
+    restart: unless-stopped
+    volumes:
+      - ./public/uploads:/app/public/uploads
 
 volumes:
-  postgres_data: 
-  pgadmin_data: 
+  postgres_data:
+
+networks:
+  servicefinder-network:
+    driver: bridge

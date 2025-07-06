@@ -16,42 +16,42 @@ const nextConfig = {
   
   // Ignore TypeScript and ESLint errors during build for deployment
   typescript: {
-    // This doesn't mean TS isn't checked at all, it means builds won't fail
     ignoreBuildErrors: true,
   },
   
   eslint: {
-    // Don't run ESLint during builds
     ignoreDuringBuilds: true,
   },
   
-  // Disable strict mode in development for easier debugging
+  // FORCE production mode - disable all development features
   reactStrictMode: false,
+  
+  // External packages that should not be bundled
+  serverExternalPackages: ["prisma", "@prisma/client"],
   
   // Experimental features
   experimental: {
-    // Allow server actions from specified origins
     serverActions: {
-      allowedOrigins: ["localhost:3000"]
-    },
-    
-    // Improve handling of API routes
-    serverComponentsExternalPackages: ["prisma", "@prisma/client"],
-    
-    // More aggressive transpilation may help with build issues
-    swcMinify: true
+      allowedOrigins: ["localhost:3000", "188.166.219.104", "188.166.219.104:3000"]
+    }
   },
   
-  // Additional compiler options
+  // Remove ALL console statements and development indicators
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production" ? {
-      exclude: ["error", "warn"]
-    } : false,
+    removeConsole: process.env.NODE_ENV === "production" ? true : false,
+  },
+  
+  // Disable development overlay in production
+  devIndicators: {
+    buildActivity: false,
+    buildActivityPosition: 'bottom-right',
   },
   
   // More aggressive webpack optimization
-  webpack: (config, { isServer }) => {
-    // Optimize the client build
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    // Force production mode
+    config.mode = 'production';
+    
     if (!isServer) {
       config.optimization.splitChunks = {
         chunks: 'all',
