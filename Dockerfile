@@ -12,6 +12,9 @@ RUN npm ci
 # Copy application files
 COPY . .
 
+# Generate Prisma client
+RUN npx prisma generate
+
 # Next.js collects anonymous telemetry data - disable it
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NEXT_TYPESCRIPT_CHECK=0
