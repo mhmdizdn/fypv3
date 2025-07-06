@@ -22,7 +22,7 @@ services:
     environment:
       DATABASE_URL: "postgresql://postgres:din@postgres:5432/fyp"
       NEXTAUTH_SECRET: "your-nextauth-secret-key-here-change-this"
-      NEXTAUTH_URL: "http://188.166.219.104:3000"
+      NEXTAUTH_URL: "https://servefinder.xyz"  # Changed to HTTPS domain
       NODE_ENV: "production"
     ports:
       - "3000:3000"
