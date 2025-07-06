@@ -251,39 +251,7 @@ export default function ProviderDashboard() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Dark gradient background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
-      
-      {/* Top gradient overlay */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-      >
-        <div
-          style={{
-            clipPath:
-              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-            background: `linear-gradient(to top right, #1e1b4b, #312e81)`
-          }}
-          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-        />
-      </div>
-      
-      {/* Bottom gradient overlay */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-      >
-        <div
-          style={{
-            clipPath:
-              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
-            background: `linear-gradient(to top right, #0f172a, #1e293b)`
-          }}
-          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 opacity-15 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-        />
-      </div>
+    <div className="min-h-screen bg-gray-100">
       {/* Navigation Bar */}
       <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
         {/* Left: Logo and App Name */}
@@ -349,8 +317,8 @@ export default function ProviderDashboard() {
               </svg>
             </button>
             {showSettings && (
-              <div className="absolute right-0 mt-2 w-32 text-white bg-white/10 backdrop-blur-md border border-white/20 rounded shadow-lg z-50">
-                                  <a href="/provider/profile" className="block px-4 py-2 hover:bg-white/20">Profile</a>
+              <div className="absolute right-0 mt-2 w-32 text-black bg-white border rounded shadow-lg z-50">
+                <a href="/provider/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 text-black hover:bg-gray-100 cursor-pointer"
@@ -400,7 +368,7 @@ export default function ProviderDashboard() {
         )}
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-100">Provider Dashboard</h1>
+          <h1 className="text-3xl font-bold">Provider Dashboard</h1>
           {provider.phone && provider.latitude && provider.longitude ? (
             <Button
               onClick={() => setShowAddService(true)}
@@ -426,8 +394,8 @@ export default function ProviderDashboard() {
         {/* Add Service Modal */}
         {showAddService && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                      <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-lg w-full max-w-md">
-            <h2 className="text-2xl font-bold mb-4 text-gray-100">Add New Service</h2>
+            <div className="bg-white p-6 rounded-lg w-full max-w-md">
+              <h2 className="text-2xl font-bold mb-4">Add New Service</h2>
               <form onSubmit={handleAddService}>
                 <div className="mb-4">
                   <label className="block text-gray-700 mb-2">Service Name</label>
