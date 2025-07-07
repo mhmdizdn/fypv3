@@ -215,6 +215,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isSettingUpAdmin, setIsSettingUpAdmin] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -231,6 +232,46 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
   }, [status, session, router]);
 
   const isAdminEmail = email === "admin@gmail.com";
+  const isAdminNotFoundError = error.includes("Admin account not found");
+
+  const handleAdminSetup = async () => {
+    setIsSettingUpAdmin(true);
+    setError("");
+    
+    try {
+      const response = await fetch("/api/admin/setup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 400 && data.message.includes("already exists")) {
+          setError("Admin account already exists. Please try signing in.");
+        } else {
+          throw new Error(data.message || "Failed to setup admin account");
+        }
+        return;
+      }
+
+      // Admin created successfully
+      setError("");
+      // Show success message briefly, then auto-fill credentials
+      setTimeout(() => {
+        setEmail("admin@gmail.com");
+        setPassword("admin123");
+      }, 500);
+      
+    } catch (err: any) {
+      console.error("Admin setup error:", err);
+      setError(err.message || "Failed to setup admin account");
+    } finally {
+      setIsSettingUpAdmin(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -249,9 +290,9 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
         if (!result?.ok) {
           // Handle specific admin errors
           if (result?.error?.includes("password")) {
-            throw new Error("Incorrect admin password");
+            throw new Error("Incorrect admin password. Use 'admin123' for default admin.");
           } else if (result?.error?.includes("not found")) {
-            throw new Error("Admin account not found");
+            throw new Error("Admin account not found. Click 'Setup Admin Account' to create it.");
           } else {
             throw new Error(result?.error || "Admin authentication failed");
           }
@@ -382,17 +423,44 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                 className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm"
               >
                 {error}
+                {/* Admin Setup Button for Admin Not Found Error */}
+                {isAdminEmail && isAdminNotFoundError && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={handleAdminSetup}
+                      disabled={isSettingUpAdmin}
+                      className="w-full px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-blue-300 text-sm transition-colors disabled:opacity-50"
+                    >
+                      {isSettingUpAdmin ? "Setting up..." : "Setup Admin Account"}
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Success Message for Admin Setup */}
+            {isAdminEmail && !error && isSettingUpAdmin === false && email === "admin@gmail.com" && password === "admin123" && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm"
+              >
+                Admin account created successfully! You can now sign in.
               </motion.div>
             )}
 
             {/* Admin Notice */}
-            {isAdminEmail && (
+            {isAdminEmail && !isAdminNotFoundError && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-400 text-sm"
               >
                 Admin login detected. You will be redirected to the admin dashboard.
+                <div className="mt-2 text-xs text-blue-300">
+                  Default credentials: admin@gmail.com / admin123
+                </div>
               </motion.div>
             )}
 
