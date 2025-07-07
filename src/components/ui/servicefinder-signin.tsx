@@ -247,13 +247,20 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
         });
 
         if (!result?.ok) {
-          throw new Error(result?.error || "Authentication failed");
+          // Handle specific admin errors
+          if (result?.error?.includes("password")) {
+            throw new Error("Incorrect admin password");
+          } else if (result?.error?.includes("not found")) {
+            throw new Error("Admin account not found");
+          } else {
+            throw new Error(result?.error || "Admin authentication failed");
+          }
         }
 
         router.push("/admin/dashboard");
       } catch (err: any) {
         console.error("Login error:", err);
-        setError(err.message || "An error occurred during login");
+        setError(err.message || "An error occurred during admin login");
       } finally {
         setLoading(false);
       }
@@ -262,7 +269,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
 
     // For non-admin users, require userType
     if (!userType) {
-      setError("Please select a user type");
+      setError("Please select your account type (Customer or Provider)");
       setLoading(false);
       return;
     }
@@ -276,7 +283,13 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
       });
 
       if (!result?.ok) {
-        throw new Error(result?.error || "Authentication failed");
+        // Handle specific error messages
+        if (result?.error) {
+          setError(result.error);
+        } else {
+          setError("Sign in failed. Please check your credentials and account type.");
+        }
+        return;
       }
 
       if (userType === "serviceProvider") {
@@ -286,7 +299,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
       }
     } catch (err: any) {
       console.error("Login error:", err);
-      setError(err.message || "An error occurred during login");
+      setError(err.message || "An error occurred during sign in");
     } finally {
       setLoading(false);
     }

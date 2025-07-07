@@ -232,7 +232,7 @@ const ServiceFinderRegister = ({ onSwitchToLogin }: ServiceFinderRegisterProps) 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!userType) {
-      setError("Please select a user type");
+      setError("Please select your account type (Customer or Provider)");
       return;
     }
     setError("");
@@ -240,6 +240,12 @@ const ServiceFinderRegister = ({ onSwitchToLogin }: ServiceFinderRegisterProps) 
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters long");
       setLoading(false);
       return;
     }
@@ -267,7 +273,17 @@ const ServiceFinderRegister = ({ onSwitchToLogin }: ServiceFinderRegisterProps) 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Registration failed");
+        // Handle specific error cases
+        if (response.status === 400) {
+          if (data.message.includes("email")) {
+            throw new Error("This email is already registered. Please use a different email or try signing in.");
+          } else if (data.message.includes("username")) {
+            throw new Error("This username is already taken. Please choose a different username.");
+          } else if (data.message.includes("required fields")) {
+            throw new Error("Please fill in all required fields.");
+          }
+        }
+        throw new Error(data.message || "Registration failed. Please try again.");
       }
 
       // Sign in user immediately after registration
@@ -286,10 +302,25 @@ const ServiceFinderRegister = ({ onSwitchToLogin }: ServiceFinderRegisterProps) 
           router.push("/customer/index");
         }
       } else {
-        throw new Error(signInResult?.error || "Login failed after registration");
+        // Handle sign-in errors with specific messages
+        let errorMessage = "Registration successful, but automatic sign-in failed. Please try signing in manually.";
+        
+        if (signInResult?.error) {
+          // Map NextAuth error codes to user-friendly messages
+          switch (signInResult.error) {
+            case "CredentialsSignin":
+              errorMessage = "Registration successful, but there was an issue signing you in. Please try signing in manually.";
+              break;
+            default:
+              errorMessage = signInResult.error;
+          }
+        }
+        
+        throw new Error(errorMessage);
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error("Registration error:", err);
+      setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
