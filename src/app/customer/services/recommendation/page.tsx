@@ -164,6 +164,7 @@ function ServiceRecommendationContent() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [ratingFilter, setRatingFilter] = useState('all');
+  const [showFilterModal, setShowFilterModal] = useState(false); // Add this line
   
   const searchParams = useSearchParams();
   
@@ -429,115 +430,167 @@ function ServiceRecommendationContent() {
         </div>
 
         {/* Main Content Area */}
-        <div className="flex min-h-screen">
-          {/* Sidebar Filters */}
-          <aside className="w-60 bg-white/10 backdrop-blur-md border-r border-white/20 p-6 hidden md:block pt-16">
-            <h2 className="text-2xl font-bold mb-6 text-gray-100">Filters</h2>
-            <div className="mb-6">
-              <div className="font-semibold mb-2 text-gray-200">Sort by</div>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input type="radio" name="sort" checked={sort === 'nearby'} onChange={() => setSort('nearby')} className="text-[#7919e6]" /> Nearby
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input type="radio" name="sort" checked={sort === 'price-high'} onChange={() => setSort('price-high')} className="text-[#7919e6]" /> Price (high to low)
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input type="radio" name="sort" checked={sort === 'price-low'} onChange={() => setSort('price-low')} className="text-[#7919e6]" /> Price (low to high)
-                </label>
-              </div>
-            </div>
-
-            {/* Rating Filter */}
-            <div className="mb-6">
-              <div className="font-semibold mb-2 text-gray-200">Rating</div>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input 
-                    type="radio" 
-                    name="rating" 
-                    checked={ratingFilter === 'all'} 
-                    onChange={() => setRatingFilter('all')} 
-                    className="text-[#7919e6]"
-                  />
-                  <span>All ratings</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input 
-                    type="radio" 
-                    name="rating" 
-                    checked={ratingFilter === '5'} 
-                    onChange={() => setRatingFilter('5')} 
-                    className="text-[#7919e6]"
-                  />
-                  <span>5 stars</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input 
-                    type="radio" 
-                    name="rating" 
-                    checked={ratingFilter === '4'} 
-                    onChange={() => setRatingFilter('4')} 
-                    className="text-[#7919e6]"
-                  />
-                  <span>4 stars</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input 
-                    type="radio" 
-                    name="rating" 
-                    checked={ratingFilter === '3'} 
-                    onChange={() => setRatingFilter('3')} 
-                    className="text-[#7919e6]"
-                  />
-                  <span>3 stars</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input 
-                    type="radio" 
-                    name="rating" 
-                    checked={ratingFilter === '2'} 
-                    onChange={() => setRatingFilter('2')} 
-                    className="text-[#7919e6]"
-                  />
-                  <span>2 stars</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input 
-                    type="radio" 
-                    name="rating" 
-                    checked={ratingFilter === '1'} 
-                    onChange={() => setRatingFilter('1')} 
-                    className="text-[#7919e6]"
-                  />
-                  <span>1 star</span>
-                </label>
-                <label className="flex items-center gap-2 text-gray-300">
-                  <input 
-                    type="radio" 
-                    name="rating" 
-                    checked={ratingFilter === 'no-rating'} 
-                    onChange={() => setRatingFilter('no-rating')} 
-                    className="text-[#7919e6]"
-                  />
-                  <span className="text-sm text-gray-400">No ratings yet</span>
-                </label>
-              </div>
-            </div>
-          </aside>
-          
+        <div className="min-h-screen">
           {/* Main Content */}
           <main className="flex-1 p-6 pt-16">
             <div className="w-full flex justify-center mb-8">
-              <input
-                type="text"
-                placeholder="Search for services, providers, and categories"
-                className="w-full max-w-3xl px-6 py-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#7919e6] text-lg shadow-sm text-white placeholder-gray-300"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
+              <div className="flex items-center gap-4 w-full max-w-4xl">
+                <input
+                  type="text"
+                  placeholder="Search for services, providers, and categories"
+                  className="flex-1 px-6 py-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#7919e6] text-lg shadow-sm text-white placeholder-gray-300"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+                <button
+                  onClick={() => setShowFilterModal(true)}
+                  className="px-6 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white hover:bg-white/20 transition-colors cursor-pointer flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+                  </svg>
+                  Filters
+                </button>
+              </div>
             </div>
 
+            {/* Filter Modal */}
+            {showFilterModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-gray-900/95 backdrop-blur-md border border-white/20 rounded-lg w-full max-w-md mx-4 max-h-[80vh] overflow-y-auto">
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-bold text-gray-100">Filters</h2>
+                      <button
+                        onClick={() => setShowFilterModal(false)}
+                        className="text-gray-400 hover:text-white cursor-pointer"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    
+                    {/* Sort by */}
+                    <div className="mb-6">
+                      <div className="font-semibold mb-3 text-gray-200">Sort by</div>
+                      <div className="flex flex-col gap-3">
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input type="radio" name="sort" checked={sort === 'nearby'} onChange={() => setSort('nearby')} className="text-[#7919e6]" />
+                          <span>Nearby</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input type="radio" name="sort" checked={sort === 'price-high'} onChange={() => setSort('price-high')} className="text-[#7919e6]" />
+                          <span>Price (high to low)</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input type="radio" name="sort" checked={sort === 'price-low'} onChange={() => setSort('price-low')} className="text-[#7919e6]" />
+                          <span>Price (low to high)</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Rating Filter */}
+                    <div className="mb-6">
+                      <div className="font-semibold mb-3 text-gray-200">Rating</div>
+                      <div className="flex flex-col gap-3">
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="rating" 
+                            checked={ratingFilter === 'all'} 
+                            onChange={() => setRatingFilter('all')} 
+                            className="text-[#7919e6]"
+                          />
+                          <span>All ratings</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="rating" 
+                            checked={ratingFilter === '5'} 
+                            onChange={() => setRatingFilter('5')} 
+                            className="text-[#7919e6]"
+                          />
+                          <span>5 stars</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="rating" 
+                            checked={ratingFilter === '4'} 
+                            onChange={() => setRatingFilter('4')} 
+                            className="text-[#7919e6]"
+                          />
+                          <span>4 stars</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="rating" 
+                            checked={ratingFilter === '3'} 
+                            onChange={() => setRatingFilter('3')} 
+                            className="text-[#7919e6]"
+                          />
+                          <span>3 stars</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="rating" 
+                            checked={ratingFilter === '2'} 
+                            onChange={() => setRatingFilter('2')} 
+                            className="text-[#7919e6]"
+                          />
+                          <span>2 stars</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="rating" 
+                            checked={ratingFilter === '1'} 
+                            onChange={() => setRatingFilter('1')} 
+                            className="text-[#7919e6]"
+                          />
+                          <span>1 star</span>
+                        </label>
+                        <label className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="rating" 
+                            checked={ratingFilter === 'no-rating'} 
+                            onChange={() => setRatingFilter('no-rating')} 
+                            className="text-[#7919e6]"
+                          />
+                          <span className="text-sm text-gray-400">No ratings yet</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Apply Button */}
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setShowFilterModal(false)}
+                        className="flex-1 px-4 py-2 bg-[#7919e6] text-white rounded-lg hover:bg-[#6617c7] transition-colors cursor-pointer"
+                      >
+                        Apply Filters
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSort('nearby');
+                          setRatingFilter('all');
+                        }}
+                        className="px-4 py-2 bg-white/10 text-gray-300 rounded-lg hover:bg-white/20 transition-colors cursor-pointer"
+                      >
+                        Reset
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Loading/Services Grid */}
             {loading ? (
               <div className="text-center py-10">
                 <div className="w-12 h-12 border-4 border-[#7919e6] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
