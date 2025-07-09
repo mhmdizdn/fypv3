@@ -394,7 +394,7 @@ function ServiceRecommendationContent() {
   return (
     <>
       <ServiceNavbar />
-      <div className="min-h-screen relative overflow-hidden pt-16">
+      <div className="min-h-screen relative overflow-hidden">
         {/* Dark gradient background */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
         
@@ -428,9 +428,10 @@ function ServiceRecommendationContent() {
           />
         </div>
 
+        {/* Main Content Area */}
         <div className="flex min-h-screen">
           {/* Sidebar Filters */}
-          <aside className="w-60 bg-white/10 backdrop-blur-md border-r border-white/20 p-6 hidden md:block">
+          <aside className="w-60 bg-white/10 backdrop-blur-md border-r border-white/20 p-6 hidden md:block pt-16">
             <h2 className="text-2xl font-bold mb-6 text-gray-100">Filters</h2>
             <div className="mb-6">
               <div className="font-semibold mb-2 text-gray-200">Sort by</div>
@@ -526,7 +527,7 @@ function ServiceRecommendationContent() {
           </aside>
           
           {/* Main Content */}
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-6 pt-16">
             <div className="w-full flex justify-center mb-8">
               <input
                 type="text"
