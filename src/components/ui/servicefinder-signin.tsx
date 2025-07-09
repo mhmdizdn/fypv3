@@ -628,7 +628,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
               >
                 <button
                   type="submit"
-                  disabled={loading || (!isAdminEmail && !userType)}
+                  disabled={loading}
                   className={cn(
                     "w-full h-12 bg-gradient-to-r relative overflow-hidden from-[#7919e6] to-purple-600 hover:from-[#621ac1] hover:to-purple-700 text-white rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
                     isHovered ? "shadow-lg shadow-[#7919e6]/25" : ""
