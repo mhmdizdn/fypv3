@@ -217,6 +217,13 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
   const [isHovered, setIsHovered] = useState(false);
   const [isSettingUpAdmin, setIsSettingUpAdmin] = useState(false);
 
+  // Add error state for individual fields
+  const [fieldErrors, setFieldErrors] = useState({
+    email: "",
+    password: "",
+    userType: ""
+  });
+
   // Redirect if already authenticated
   useEffect(() => {
     if (status === "authenticated" && session) {
@@ -278,6 +285,19 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
     setError("");
     setLoading(true);
 
+    // Add explicit validation for empty fields
+    if (!email.trim()) {
+      setError("Please enter your email address");
+      setLoading(false);
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Please enter your password");
+      setLoading(false);
+      return;
+    }
+
     // Check if it's admin email
     if (email === "admin@gmail.com") {
       try {
@@ -308,7 +328,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
       return;
     }
 
-    // For non-admin users, require userType
+    // For non-admin users, validate account type AFTER checking fields
     if (!userType) {
       setError("Please select your account type (Customer or Provider)");
       setLoading(false);
@@ -345,6 +365,35 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
       setLoading(false);
     }
   };
+
+  const validateField = (field: string, value: string) => {
+    switch (field) {
+      case 'email':
+        if (!value.trim()) {
+          setFieldErrors(prev => ({ ...prev, email: "Email is required" }));
+        } else {
+          setFieldErrors(prev => ({ ...prev, email: "" }));
+        }
+        break;
+      case 'password':
+        if (!value.trim()) {
+          setFieldErrors(prev => ({ ...prev, password: "Password is required" }));
+        } else {
+          setFieldErrors(prev => ({ ...prev, password: "" }));
+        }
+        break;
+    }
+  };
+
+  // Update input styling to show errors
+  const emailInputClasses = cn(
+    "w-full h-10 px-3 py-2 bg-[#13151f] border rounded-lg placeholder:text-gray-500 text-gray-200 focus:outline-none transition-colors",
+    fieldErrors.email ? "border-red-500 focus:border-red-500" : "border-[#2a2d3a] focus:border-[#7919e6]"
+  );
+  const passwordInputClasses = cn(
+    "w-full h-10 px-3 py-2 pr-10 bg-[#13151f] border rounded-lg placeholder:text-gray-500 text-gray-200 focus:outline-none transition-colors",
+    fieldErrors.password ? "border-red-500 focus:border-red-500" : "border-[#2a2d3a] focus:border-[#7919e6]"
+  );
 
   if (status === "loading") {
     return (
@@ -514,10 +563,14 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onBlur={(e) => validateField('email', e.target.value)}
                   placeholder="Enter your email address"
                   required
-                  className="w-full h-10 px-3 py-2 bg-[#13151f] border border-[#2a2d3a] rounded-lg placeholder:text-gray-500 text-gray-200 focus:border-[#7919e6] focus:outline-none transition-colors"
+                  className={emailInputClasses}
                 />
+                {fieldErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>
+                )}
               </div>
               
               <div>
@@ -530,9 +583,10 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                     type={isPasswordVisible ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    onBlur={(e) => validateField('password', e.target.value)}
                     placeholder="Enter your password"
                     required
-                    className="w-full h-10 px-3 py-2 pr-10 bg-[#13151f] border border-[#2a2d3a] rounded-lg placeholder:text-gray-500 text-gray-200 focus:border-[#7919e6] focus:outline-none transition-colors"
+                    className={passwordInputClasses}
                   />
                   <button
                     type="button"
@@ -542,6 +596,9 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                     {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+                {fieldErrors.password && (
+                  <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>
+                )}
               </div>
               
               <motion.div 
