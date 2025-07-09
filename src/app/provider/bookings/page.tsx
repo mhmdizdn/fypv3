@@ -355,7 +355,7 @@ export default function ProviderBookingsPage() {
           ) : (
             <div className="grid gap-6">
               {filteredBookings.map((booking) => (
-                <div key={booking.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6 cursor-pointer">
+                <div key={booking.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-xl font-semibold text-gray-100">{booking.service.name}</h3>
@@ -403,7 +403,7 @@ export default function ProviderBookingsPage() {
                         <Button
                           key={action.status}
                           size="sm"
-                          className={`text-white ${action.color}`}
+                          className={`text-white cursor-pointer ${action.color}`}
                           onClick={() => handleUpdateBookingStatus(booking.id, action.status)}
                         >
                           {action.label}
@@ -413,7 +413,7 @@ export default function ProviderBookingsPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="text-green-400 border-green-400 hover:bg-green-400 hover:text-white"
+                          className="text-green-400 border-green-400 hover:bg-green-400 hover:text-white cursor-pointer"
                           onClick={() => {
                             if (typeof window !== 'undefined') {
                               const navUrl = getNavigationUrl(booking.customerAddress);

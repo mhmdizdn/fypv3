@@ -509,7 +509,7 @@ export default function ProviderDashboard() {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service) => (
-            <div key={service.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md overflow-hidden cursor-pointer">
+            <div key={service.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md overflow-hidden">
               {service.imageUrl ? (
                 <img src={service.imageUrl} alt={service.name} className="w-full h-48 object-cover" />
               ) : (

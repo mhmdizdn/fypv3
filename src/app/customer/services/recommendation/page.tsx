@@ -70,7 +70,7 @@ function ServiceNavbarContent() {
   };
 
   return (
-          <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
+          <nav className="w-full bg-gray-900/60 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
       {/* Left: Logo and App Name */}
       <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">
@@ -394,7 +394,7 @@ function ServiceRecommendationContent() {
   return (
     <>
       <ServiceNavbar />
-      <div className="min-h-screen relative overflow-hidden pt-20">
+      <div className="min-h-screen relative overflow-hidden pt-16">
         {/* Dark gradient background */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
         
