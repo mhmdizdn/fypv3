@@ -331,6 +331,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
     // For non-admin users, validate account type AFTER checking fields
     if (!userType) {
       setError("Please select your account type (Customer or Provider)");
+      setFieldErrors(prev => ({ ...prev, userType: "Please select your account type" }));
       setLoading(false);
       return;
     }
@@ -525,7 +526,11 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
-                    onClick={() => setUserType("user")}
+                    onClick={() => {
+                      setUserType("user");
+                      setFieldErrors(prev => ({ ...prev, userType: "" }));
+                      setError("");
+                    }}
                     className={cn(
                       "p-4 rounded-lg border-2 transition-all duration-200 text-center",
                       userType === "user"
@@ -538,7 +543,11 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                   </button>
                   <button
                     type="button"
-                    onClick={() => setUserType("serviceProvider")}
+                    onClick={() => {
+                      setUserType("serviceProvider");
+                      setFieldErrors(prev => ({ ...prev, userType: "" }));
+                      setError("");
+                    }}
                     className={cn(
                       "p-4 rounded-lg border-2 transition-all duration-200 text-center",
                       userType === "serviceProvider"
@@ -550,6 +559,15 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                     <div className="font-semibold text-sm">Provider</div>
                   </button>
                 </div>
+                {fieldErrors.userType && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-red-500 text-sm mt-2 text-center"
+                  >
+                    {fieldErrors.userType}
+                  </motion.p>
+                )}
               </motion.div>
             )}
             
