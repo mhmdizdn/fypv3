@@ -40,7 +40,7 @@ function ProviderNavbar() {
   };
 
   return (
-          <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
+    <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
       {/* Left: Logo and App Name */}
       <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">
@@ -192,7 +192,7 @@ export default function ProviderReviewsPage() {
           <span
             key={star}
             className={`text-lg ${
-              star <= rating ? 'text-yellow-400' : 'text-gray-300'
+              star <= rating ? 'text-yellow-400' : 'text-gray-500'
             }`}
           >
             ★
@@ -233,10 +233,12 @@ export default function ProviderReviewsPage() {
     return (
       <>
         <ProviderNavbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen relative overflow-hidden flex items-center justify-center">
+          {/* Dark gradient background */}
+          <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7919e6] mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading reviews...</p>
+            <p className="mt-4 text-gray-400">Loading reviews...</p>
           </div>
         </div>
       </>
@@ -246,15 +248,48 @@ export default function ProviderReviewsPage() {
   return (
     <>
       <ProviderNavbar />
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <div className="min-h-screen relative overflow-hidden pt-20">
+        {/* Dark gradient background */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
+        
+        {/* Top gradient overlay */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+        >
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+              background: `linear-gradient(to top right, #1e1b4b, #312e81)`
+            }}
+            className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+          />
+        </div>
+        
+        {/* Bottom gradient overlay */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+        >
+          <div
+            style={{
+              clipPath:
+                'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+              background: `linear-gradient(to top right, #0f172a, #1e293b)`
+            }}
+            className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 opacity-15 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+          />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Customer Reviews</h1>
-            <p className="mt-2 text-gray-600">View and respond to customer feedback for your services</p>
+            <h1 className="text-3xl font-bold text-gray-100">Customer Reviews</h1>
+            <p className="mt-2 text-gray-400">View and respond to customer feedback for your services</p>
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
+            <div className="bg-red-900/20 backdrop-blur-sm border border-red-500/30 text-red-300 px-4 py-3 rounded-lg mb-6">
               {error}
             </div>
           )}
@@ -262,34 +297,34 @@ export default function ProviderReviewsPage() {
           {/* Statistics */}
           {reviews.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-              <div className="bg-white p-4 rounded-lg shadow">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-lg shadow">
                 <div className="text-2xl font-bold text-[#7919e6]">{reviews.length}</div>
-                <div className="text-sm text-gray-600">Total Reviews</div>
+                <div className="text-sm text-gray-400">Total Reviews</div>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow">
-                <div className="text-2xl font-bold text-yellow-500">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-lg shadow">
+                <div className="text-2xl font-bold text-yellow-400">
                   {reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : '0'}
                 </div>
-                <div className="text-sm text-gray-600">Average Rating</div>
+                <div className="text-sm text-gray-400">Average Rating</div>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow">
-                <div className="text-2xl font-bold text-green-600">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-lg shadow">
+                <div className="text-2xl font-bold text-green-400">
                   {reviews.filter(r => r.providerComment).length}
                 </div>
-                <div className="text-sm text-gray-600">Responded To</div>
+                <div className="text-sm text-gray-400">Responded To</div>
               </div>
-              <div className="bg-white p-4 rounded-lg shadow">
-                <div className="text-2xl font-bold text-orange-600">
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-lg shadow">
+                <div className="text-2xl font-bold text-orange-400">
                   {reviews.filter(r => !r.providerComment).length}
                 </div>
-                <div className="text-sm text-gray-600">Awaiting Response</div>
+                <div className="text-sm text-gray-400">Awaiting Response</div>
               </div>
             </div>
           )}
 
           {/* Filter Tabs */}
           <div className="mb-6">
-            <div className="border-b border-gray-200">
+            <div className="border-b border-gray-600">
               <nav className="-mb-px flex space-x-8">
                 {[
                   { key: 'all', label: 'All Reviews' },
@@ -304,7 +339,7 @@ export default function ProviderReviewsPage() {
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${
                       filter === tab.key
                         ? 'border-[#7919e6] text-[#7919e6]'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-500'
                     }`}
                   >
                     {tab.label}
@@ -320,15 +355,15 @@ export default function ProviderReviewsPage() {
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.013 8.013 0 01-2.83-.497l-5.17 1.55 1.55-5.17A8.013 8.013 0 013 12c0-4.418 3.582-8 8-8s8 3.582 8 8z" />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No reviews found</h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <h3 className="mt-2 text-sm font-medium text-gray-200">No reviews found</h3>
+              <p className="mt-1 text-sm text-gray-400">
                 {filter === 'all' ? 'You haven\'t received any reviews yet.' : `No reviews match the current filter.`}
               </p>
             </div>
           ) : (
             <div className="space-y-6">
               {filteredReviews.map((review) => (
-                <div key={review.id} className="bg-white rounded-lg shadow-md p-6">
+                <div key={review.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6">
                   {/* Review Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
@@ -336,17 +371,17 @@ export default function ProviderReviewsPage() {
                         {(review.customer.name || review.customer.username).charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-gray-100">
                           {review.customer.name || review.customer.username}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-400">
                           Service: {review.service.name}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       {renderStars(review.rating)}
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-sm text-gray-400 mt-1">
                         {formatDate(review.createdAt)}
                       </p>
                     </div>
@@ -355,19 +390,19 @@ export default function ProviderReviewsPage() {
                   {/* Customer Review */}
                   {review.comment && (
                     <div className="mb-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Customer Review:</h4>
-                      <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">{review.comment}</p>
+                      <h4 className="font-medium text-gray-200 mb-2">Customer Review:</h4>
+                      <p className="text-gray-300 bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-white/20">{review.comment}</p>
                     </div>
                   )}
 
                   {/* Provider Response */}
                   {review.providerComment ? (
                     <div className="mb-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Your Response:</h4>
-                      <p className="text-gray-700 bg-blue-50 p-3 rounded-lg border-l-4 border-[#7919e6]">
+                      <h4 className="font-medium text-gray-200 mb-2">Your Response:</h4>
+                      <p className="text-gray-300 bg-blue-900/30 backdrop-blur-sm p-3 rounded-lg border-l-4 border-[#7919e6] border border-blue-500/30">
                         {review.providerComment}
                       </p>
-                      <p className="text-xs text-gray-500 mt-2">
+                      <p className="text-xs text-gray-400 mt-2">
                         Responded on {formatDate(review.updatedAt)}
                       </p>
                     </div>
@@ -375,12 +410,12 @@ export default function ProviderReviewsPage() {
                     <div className="mb-4">
                       {replyingTo === review.id ? (
                         <div>
-                          <h4 className="font-medium text-gray-900 mb-2">Your Response:</h4>
+                          <h4 className="font-medium text-gray-200 mb-2">Your Response:</h4>
                           <textarea
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             placeholder="Write your response to this review..."
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7919e6] focus:border-transparent resize-none"
+                            className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6] focus:border-transparent resize-none"
                             rows={4}
                             disabled={submittingReply}
                           />
@@ -414,24 +449,26 @@ export default function ProviderReviewsPage() {
                           </div>
                         </div>
                       ) : (
-                        <Button
-                          onClick={() => setReplyingTo(review.id)}
-                          variant="outline"
-                          size="sm"
-                          className="text-[#7919e6] border-[#7919e6] hover:bg-[#7919e6] hover:text-white"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 5.523-4.477 10-10 10S1 17.523 1 12 5.477 2 11 2s10 4.477 10 10z" />
-                          </svg>
-                          Respond to Review
-                        </Button>
+                        <div className="flex justify-end">
+                          <Button
+                            onClick={() => setReplyingTo(review.id)}
+                            variant="outline"
+                            size="sm"
+                            className="text-[#7919e6] border-[#7919e6] hover:bg-[#7919e6] hover:text-white"
+                          >
+                            Reply to Review
+                          </Button>
+                        </div>
                       )}
                     </div>
                   )}
 
-                  {/* Booking Info */}
-                  <div className="text-sm text-gray-500 pt-4 border-t border-gray-200">
-                    <p>Booking #{review.booking.id} • Service Date: {formatDate(review.booking.scheduledDate)}</p>
+                  {/* Booking Details */}
+                  <div className="pt-4 border-t border-gray-600">
+                    <p className="text-xs text-gray-400">
+                      Booking Date: {formatDate(review.booking.scheduledDate)} | 
+                      Customer: {review.booking.customerName}
+                    </p>
                   </div>
                 </div>
               ))}

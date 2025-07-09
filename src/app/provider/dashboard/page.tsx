@@ -251,7 +251,40 @@ export default function ProviderDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Dark gradient background */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
+      
+      {/* Top gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #1e1b4b, #312e81)`
+          }}
+          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+      
+      {/* Bottom gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #0f172a, #1e293b)`
+          }}
+          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 opacity-15 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+
       {/* Navigation Bar */}
       <nav className="w-full bg-black/20 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
         {/* Left: Logo and App Name */}
@@ -334,7 +367,7 @@ export default function ProviderDashboard() {
       <div className="container mx-auto px-4 py-8 pt-24">
         {/* Profile Completion Warning */}
         {(!provider.phone || !provider.latitude || !provider.longitude) && (
-          <div className="mb-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-lg">
+          <div className="mb-6 p-4 bg-amber-900/20 backdrop-blur-sm border-l-4 border-amber-400 rounded-lg border border-amber-400/30">
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <svg className="h-5 w-5 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
@@ -342,8 +375,8 @@ export default function ProviderDashboard() {
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-amber-800">Complete Your Profile</h3>
-                <div className="mt-1 text-sm text-amber-700">
+                <h3 className="text-sm font-medium text-amber-300">Complete Your Profile</h3>
+                <div className="mt-1 text-sm text-amber-200">
                   <p>
                     Please complete your profile before adding services. You need to add:
                     {!provider.phone && <span className="font-medium"> Phone Number</span>}
@@ -354,7 +387,7 @@ export default function ProviderDashboard() {
                 <div className="mt-2">
                   <a
                     href="/provider/profile"
-                    className="inline-flex items-center text-sm font-medium text-amber-800 hover:text-amber-700"
+                    className="inline-flex items-center text-sm font-medium text-amber-300 hover:text-amber-200"
                   >
                     Go to Profile
                     <svg className="ml-1 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -368,7 +401,7 @@ export default function ProviderDashboard() {
         )}
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Provider Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-100">Provider Dashboard</h1>
           {provider.phone && provider.latitude && provider.longitude ? (
             <Button
               onClick={() => setShowAddService(true)}
@@ -393,84 +426,79 @@ export default function ProviderDashboard() {
 
         {/* Add Service Modal */}
         {showAddService && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg w-full max-w-md">
-              <h2 className="text-2xl font-bold mb-4">Add New Service</h2>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-gray-900/95 backdrop-blur-md border border-white/20 p-6 rounded-lg w-full max-w-md">
+              <h2 className="text-2xl font-bold mb-4 text-gray-100">Add New Service</h2>
               <form onSubmit={handleAddService}>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Service Name</label>
+                  <label className="block text-gray-300 mb-2">Service Name</label>
                   <input
                     type="text"
                     value={newService.name}
                     onChange={(e) => setNewService({ ...newService, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Description</label>
+                  <label className="block text-gray-300 mb-2">Description</label>
                   <textarea
                     value={newService.description}
                     onChange={(e) => setNewService({ ...newService, description: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Price (RM)</label>
+                  <label className="block text-gray-300 mb-2">Price (RM)</label>
                   <input
                     type="number"
                     value={newService.price}
                     onChange={(e) => setNewService({ ...newService, price: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Category</label>
+                  <label className="block text-gray-300 mb-2">Category</label>
                   <input
                     type="text"
                     value={newService.category}
                     onChange={(e) => setNewService({ ...newService, category: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Service Image</label>
+                  <label className="block text-gray-300 mb-2">Service Image</label>
                   <input
                     type="file"
                     ref={fileInputRef}
                     accept="image/*"
                     onChange={handleFileChange}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                   />
                   {imagePreview && (
                     <div className="mt-2">
-                      <img 
-                        src={imagePreview} 
-                        alt="Image preview" 
-                        className="w-full h-40 object-cover rounded-md"
-                      />
+                      <img src={imagePreview} alt="Preview" className="w-full h-32 object-cover rounded" />
                     </div>
                   )}
                 </div>
-                <div className="flex justify-end gap-4">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setShowAddService(false);
-                      setImagePreview(null);
-                    }}
-                    variant="outline"
-                  >
-                    Cancel
+                <div className="flex gap-2">
+                  <Button type="submit" variant="gradient" className="flex-1">
+                    Add Service
                   </Button>
                   <Button
-                    type="submit"
-                    variant="gradient"
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setShowAddService(false);
+                      setNewService({ name: '', description: '', price: '', category: '', image: null });
+                      setImagePreview(null);
+                    }}
+                    className="flex-1"
                   >
-                    Add Service
+                    Cancel
                   </Button>
                 </div>
               </form>
@@ -478,86 +506,131 @@ export default function ProviderDashboard() {
           </div>
         )}
 
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map((service) => (
+            <div key={service.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md overflow-hidden">
+              {service.imageUrl ? (
+                <img src={service.imageUrl} alt={service.name} className="w-full h-48 object-cover" />
+              ) : (
+                <div className="w-full h-48 bg-gray-700 flex items-center justify-center">
+                  <span className="text-gray-300">{service.name}</span>
+                </div>
+              )}
+              <div className="p-4">
+                <h3 className="text-xl font-semibold text-gray-100 mb-2">{service.name}</h3>
+                <p className="text-gray-300 mb-2">{service.description}</p>
+                <p className="text-gray-400 text-sm mb-2">Category: {service.category}</p>
+                <p className="text-[#19E6A7] font-bold text-lg mb-4">RM {service.price.toFixed(2)}</p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openEditModal(service)}
+                    className="flex-1"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openDeleteConfirmation(service)}
+                    className="flex-1 text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {services.length === 0 && (
+          <div className="text-center py-12">
+            <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <h3 className="text-lg font-medium text-gray-200 mb-2">No services yet</h3>
+            <p className="text-gray-400 mb-4">Get started by adding your first service</p>
+            {provider.phone && provider.latitude && provider.longitude && (
+              <Button onClick={() => setShowAddService(true)} variant="gradient">
+                Add Your First Service
+              </Button>
+            )}
+          </div>
+        )}
+
         {/* Edit Service Modal */}
-        {showEditService && (
+        {showEditService && currentService && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-md">
-              <h2 className="text-2xl font-bold mb-4">Edit Service</h2>
+            <div className="bg-gray-900/95 backdrop-blur-md border border-white/20 p-6 rounded-lg w-full max-w-md">
+              <h2 className="text-2xl font-bold mb-4 text-gray-100">Edit Service</h2>
               <form onSubmit={handleEditService}>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Service Name</label>
+                  <label className="block text-gray-300 mb-2">Service Name</label>
                   <input
                     type="text"
                     value={editService.name}
                     onChange={(e) => setEditService({ ...editService, name: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Description</label>
+                  <label className="block text-gray-300 mb-2">Description</label>
                   <textarea
                     value={editService.description}
                     onChange={(e) => setEditService({ ...editService, description: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Price (RM)</label>
+                  <label className="block text-gray-300 mb-2">Price (RM)</label>
                   <input
                     type="number"
                     value={editService.price}
                     onChange={(e) => setEditService({ ...editService, price: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Category</label>
+                  <label className="block text-gray-300 mb-2">Category</label>
                   <input
                     type="text"
                     value={editService.category}
                     onChange={(e) => setEditService({ ...editService, category: e.target.value })}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2">Service Image</label>
+                  <label className="block text-gray-300 mb-2">Service Image</label>
                   <input
                     type="file"
                     ref={editFileInputRef}
                     accept="image/*"
                     onChange={handleEditFileChange}
-                    className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#7919e6]"
                   />
                   {editImagePreview && (
                     <div className="mt-2">
-                      <img 
-                        src={editImagePreview} 
-                        alt="Image preview" 
-                        className="w-full h-40 object-cover rounded-md"
-                      />
+                      <img src={editImagePreview} alt="Preview" className="w-full h-32 object-cover rounded" />
                     </div>
                   )}
                 </div>
-                <div className="flex justify-end gap-4">
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setShowEditService(false);
-                      setEditImagePreview(null);
-                    }}
-                    variant="outline"
-                  >
-                    Cancel
+                <div className="flex gap-2">
+                  <Button type="submit" variant="gradient" className="flex-1">
+                    Update Service
                   </Button>
                   <Button
-                    type="submit"
-                    variant="gradient"
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowEditService(false)}
+                    className="flex-1"
                   >
-                    Save Changes
+                    Cancel
                   </Button>
                 </div>
               </form>
@@ -568,67 +641,29 @@ export default function ProviderDashboard() {
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && currentService && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg w-full max-w-md">
-              <h2 className="text-2xl font-bold mb-4">Delete Service</h2>
-              <p className="mb-6">Are you sure you want to delete the service "{currentService.name}"? This action cannot be undone.</p>
-              <div className="flex justify-end gap-4">
-                <Button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
+            <div className="bg-gray-900/95 backdrop-blur-md border border-white/20 p-6 rounded-lg w-full max-w-md">
+              <h2 className="text-2xl font-bold mb-4 text-gray-100">Delete Service</h2>
+              <p className="text-gray-300 mb-4">
+                Are you sure you want to delete "{currentService.name}"? This action cannot be undone.
+              </p>
+              <div className="flex gap-2">
                 <Button
                   onClick={handleDeleteService}
-                  variant="danger"
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white"
                 >
                   Delete
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1"
+                >
+                  Cancel
                 </Button>
               </div>
             </div>
           </div>
         )}
-
-        {/* Services List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.isArray(services) && services.map((service) => (
-            <div key={service.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              {service.imageUrl && (
-                <div className="h-48 overflow-hidden">
-                  <img 
-                    src={service.imageUrl} 
-                    alt={service.name} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{service.name}</h3>
-                <p className="text-gray-600 mb-4">{service.description}</p>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-blue-600 font-bold">RM {service.price.toFixed(2)}</span>
-                  <span className="text-gray-500">{service.category}</span>
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button
-                    onClick={() => openEditModal(service)}
-                    variant="gradient"
-                    size="sm"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => openDeleteConfirmation(service)}
-                    variant="danger"
-                    size="sm"
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
