@@ -59,13 +59,13 @@ function ProviderNavbar() {
       
       {/* Center: Navigation */}
       <div className="hidden md:flex items-center gap-6 text-white">
-        <Link href="/provider/dashboard" className="hover:text-[#7919e6] transition-colors">
+        <Link href="/provider/dashboard" className="hover:text-[#7919e6] transition-colors cursor-pointer">
           Dashboard
         </Link>
-        <Link href="/provider/bookings" className="hover:text-[#7919e6] transition-colors">
+        <Link href="/provider/bookings" className="hover:text-[#7919e6] transition-colors cursor-pointer">
           Bookings
         </Link>
-        <Link href="/provider/reviews" className="text-[#7919e6] font-semibold">
+        <Link href="/provider/reviews" className="text-[#7919e6] font-semibold cursor-pointer">
           Reviews
         </Link>
       </div>
@@ -336,7 +336,7 @@ export default function ProviderReviewsPage() {
                   <button
                     key={tab.key}
                     onClick={() => setFilter(tab.key)}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    className={`cursor-pointer inline-flex items-center px-1 py-4 border-b-2 font-medium text-sm ${
                       filter === tab.key
                         ? 'border-[#7919e6] text-[#7919e6]'
                         : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-500'
@@ -363,7 +363,7 @@ export default function ProviderReviewsPage() {
           ) : (
             <div className="space-y-6">
               {filteredReviews.map((review) => (
-                <div key={review.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6">
+                <div key={review.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6 cursor-pointer">
                   {/* Review Header */}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
@@ -454,7 +454,7 @@ export default function ProviderReviewsPage() {
                             onClick={() => setReplyingTo(review.id)}
                             variant="outline"
                             size="sm"
-                            className="text-[#7919e6] border-[#7919e6] hover:bg-[#7919e6] hover:text-white"
+                            className="cursor-pointer text-[#7919e6] border-[#7919e6] hover:bg-[#7919e6] hover:text-white"
                           >
                             Reply to Review
                           </Button>

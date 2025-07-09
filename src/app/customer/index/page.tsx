@@ -99,16 +99,16 @@ export default function IndexPage() {
         </div>
         
         <div className="hidden md:flex items-center gap-6 text-white">
-          <Link href="/customer/index" className="text-[#7919e6] font-semibold">
+          <Link href="/customer/index" className="text-[#7919e6] font-semibold cursor-pointer">
             Home
           </Link>
-          <Link href="/customer/bookings" className="hover:text-[#7919e6] transition-colors">
+          <Link href="/customer/bookings" className="hover:text-[#7919e6] transition-colors cursor-pointer">
             My Bookings
           </Link>
         </div>
         
         <div className="flex items-center gap-6 text-gray-700 text-base">
-          <div className="flex items-center gap-1 text-white">
+          <div className="flex items-center gap-1 text-white cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 15c2.5 0 4.847.655 6.879 1.804M15 11a3 3 0 11-6 0 3 3 0 616 0z" />
             </svg>
@@ -133,7 +133,7 @@ export default function IndexPage() {
             </button>
             {showSettings && (
               <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
-                <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
+                <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</a>
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"

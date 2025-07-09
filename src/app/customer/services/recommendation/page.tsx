@@ -549,8 +549,8 @@ function ServiceRecommendationContent() {
                   {filteredServices.map(service => (
                     <div 
                       key={service.id} 
-                      className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl shadow-md overflow-hidden relative flex flex-col cursor-pointer hover:shadow-lg transition-shadow"
                       onClick={() => openServiceDetails(service)}
+                      className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6 cursor-pointer hover:bg-white/20 transition-colors"
                     >
                       <div className="relative h-48 w-full overflow-hidden">
                         {service.imageUrl ? (

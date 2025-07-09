@@ -304,13 +304,13 @@ export default function ProviderDashboard() {
         </div>
         {/* Center: Navigation */}
         <div className="hidden md:flex items-center gap-6 text-white">
-          <Link href="/provider/dashboard" className="text-[#7919e6] font-semibold">
+          <Link href="/provider/dashboard" className="text-[#7919e6] font-semibold cursor-pointer">
             Dashboard
           </Link>
-          <Link href="/provider/bookings" className="hover:text-[#7919e6] transition-colors" >
+          <Link href="/provider/bookings" className="hover:text-[#7919e6] transition-colors cursor-pointer" >
             Bookings
           </Link>
-          <Link href="/provider/reviews" className="hover:text-[#7919e6] transition-colors">
+          <Link href="/provider/reviews" className="hover:text-[#7919e6] transition-colors cursor-pointer">
             Reviews
           </Link>
         </div>
@@ -387,7 +387,7 @@ export default function ProviderDashboard() {
                 <div className="mt-2">
                   <a
                     href="/provider/profile"
-                    className="inline-flex items-center text-sm font-medium text-amber-300 hover:text-amber-200"
+                    className="inline-flex items-center text-sm font-medium text-amber-300 hover:text-amber-200 cursor-pointer"
                   >
                     Go to Profile
                     <svg className="ml-1 h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -509,7 +509,7 @@ export default function ProviderDashboard() {
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service) => (
-            <div key={service.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md overflow-hidden">
+            <div key={service.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md overflow-hidden cursor-pointer">
               {service.imageUrl ? (
                 <img src={service.imageUrl} alt={service.name} className="w-full h-48 object-cover" />
               ) : (
@@ -527,7 +527,7 @@ export default function ProviderDashboard() {
                     variant="outline"
                     size="sm"
                     onClick={() => openEditModal(service)}
-                    className="flex-1"
+                    className="flex-1 cursor-pointer"
                   >
                     Edit
                   </Button>
@@ -535,7 +535,7 @@ export default function ProviderDashboard() {
                     variant="outline"
                     size="sm"
                     onClick={() => openDeleteConfirmation(service)}
-                    className="flex-1 text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+                    className="flex-1 text-red-400 border-red-400 hover:bg-red-400 hover:text-white cursor-pointer"
                   >
                     Delete
                   </Button>

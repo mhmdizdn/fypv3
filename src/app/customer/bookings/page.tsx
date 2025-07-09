@@ -84,10 +84,10 @@ function CustomerNavbar() {
       
       {/* Center: Navigation */}
       <div className="hidden md:flex items-center gap-6 text-white">
-        <Link href="/customer/index" className="hover:text-[#7919e6] transition-colors">
+        <Link href="/customer/index" className="hover:text-[#7919e6] transition-colors cursor-pointer">
           Home
         </Link>
-        <Link href="/customer/bookings" className="text-[#7919e6] font-semibold">
+        <Link href="/customer/bookings" className="text-[#7919e6] font-semibold cursor-pointer">
           My Bookings
         </Link>
       </div>
@@ -113,7 +113,7 @@ function CustomerNavbar() {
           </button>
           {mounted && showSettings && (
             <div className="absolute right-0 mt-2 w-32 bg-white border rounded shadow-lg z-50">
-              <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</a>
+              <a href="/customer/profile" className="block px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</a>
               <button
                 onClick={handleLogout}
                 className="w-full text-left px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -401,7 +401,7 @@ export default function CustomerBookingsPage() {
                   <button
                     key={tab.key}
                     onClick={() => setFilter(tab.key)}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    className={`cursor-pointer py-2 px-1 border-b-2 font-medium text-sm ${
                       filter === tab.key
                         ? 'border-[#7919e6] text-[#7919e6]'
                         : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-300'
@@ -434,7 +434,7 @@ export default function CustomerBookingsPage() {
           ) : (
             <div className="grid gap-6">
               {filteredBookings.map((booking) => (
-                <div key={booking.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6">
+                <div key={booking.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6 cursor-pointer">
                   <div className="flex justify-between items-start mb-4">
                                           <div>
                         <h3 className="text-xl font-semibold text-gray-100">{booking.service.name}</h3>
