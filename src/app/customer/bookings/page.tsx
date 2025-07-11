@@ -17,6 +17,7 @@ interface Review {
   updatedAt?: string;
 }
 
+// Update the Booking interface to include provider location fields
 interface Booking {
   id: number;
   customerName: string;
@@ -42,6 +43,8 @@ interface Booking {
       serviceType: string;
       phone?: string;
       address?: string;
+      latitude?: number;
+      longitude?: number;
     };
   };
 }
@@ -305,16 +308,29 @@ export default function CustomerBookingsPage() {
     return <span className="text-sm text-gray-600">{address}</span>;
   };
 
-  const getNavigationUrl = (address: string) => {
-    // Check if the address contains GPS coordinates
-    if (address.startsWith('GPS Coordinates:')) {
-      const parts = address.split(' | ');
-      const coordsPart = parts[0].replace('GPS Coordinates: ', '');
-      const [lat, lng] = coordsPart.split(', ').map(coord => coord.trim());
-      
-      // Return Google Maps URL for navigation
-      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  // Replace the existing getNavigationUrl function with this new one for provider navigation
+  const getProviderNavigationUrl = (provider: Booking['service']['provider']) => {
+    // If provider has GPS coordinates, use them
+    if (provider.latitude && provider.longitude) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${provider.latitude},${provider.longitude}`;
     }
+    
+    // If provider has address, use it
+    if (provider.address) {
+      // Check if the address contains GPS coordinates
+      if (provider.address.startsWith('GPS Coordinates:')) {
+        const parts = provider.address.split(' | ');
+        const coordsPart = parts[0].replace('GPS Coordinates: ', '');
+        const [lat, lng] = coordsPart.split(', ').map(coord => coord.trim());
+        
+        // Return Google Maps URL for navigation
+        return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      } else {
+        // Use address for navigation
+        return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(provider.address)}`;
+      }
+    }
+    
     return null;
   };
 
@@ -535,14 +551,15 @@ export default function CustomerBookingsPage() {
                           Rate Service
                         </Button>
                       )}
-                      {getNavigationUrl(booking.customerAddress) && booking.status !== 'COMPLETED' && (
+                      {/* Updated navigate button to go to provider shop */}
+                      {getProviderNavigationUrl(booking.service.provider) && booking.status !== 'COMPLETED' && (
                         <Button
                           variant="outline"
                           size="sm"
                           className="text-green-600 border-green-600 hover:bg-green-50"
                           onClick={() => {
                             if (typeof window !== 'undefined') {
-                              const navUrl = getNavigationUrl(booking.customerAddress);
+                              const navUrl = getProviderNavigationUrl(booking.service.provider);
                               if (navUrl) {
                                 window.open(navUrl, '_blank');
                               }
@@ -552,7 +569,7 @@ export default function CustomerBookingsPage() {
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c-.317-.158.69-.158 1.006 0l4.994 2.497c.317.158.69.158 1.007 0z" />
                           </svg>
-                          Navigate
+                          Navigate Shop
                         </Button>
                       )}
                     </div>
