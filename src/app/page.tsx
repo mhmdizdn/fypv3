@@ -1,6 +1,5 @@
 'use client';
 
-import { AuroraBackground } from "@/components/ui/aurora-background";
 import { Navbar } from "@/components/ui/navbar";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -215,14 +214,48 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
-      <AuroraBackground>
-        <div className="relative z-50">
-          <Navbar />
-        </div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Dark gradient background - same as provider pages */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-black via-gray-900 to-slate-900"></div>
+      
+      {/* Top gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #1e1b4b, #312e81)`
+          }}
+          className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 rotate-[30deg] opacity-15 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+      
+      {/* Bottom gradient overlay */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+      >
+        <div
+          style={{
+            clipPath:
+              'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)',
+            background: `linear-gradient(to top right, #0f172a, #1e293b)`
+          }}
+          className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] max-w-none -translate-x-1/2 opacity-15 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+        />
+      </div>
+
+      {/* Navbar */}
+      <div className="relative z-50">
+        <Navbar />
+      </div>
+
       <main className="pt-16 w-full max-w-full relative z-40">
-          {/* Hero Section */}
-          <section className="h-screen flex items-center justify-center px-4 md:px-10 relative z-30">
+        {/* Hero Section */}
+        <section className="h-screen flex items-center justify-center px-4 md:px-10 relative z-30">
             <motion.div 
               className="text-center relative z-30"
               initial={{ opacity: 0, y: 20 }}
@@ -475,8 +508,7 @@ export default function Home() {
           </div>
         </section>
         </main>
-      </AuroraBackground>
-
+      
       {/* Service Details Modal */}
       {showServiceDetails && selectedService && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
