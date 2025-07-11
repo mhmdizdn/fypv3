@@ -70,7 +70,7 @@ function ServiceNavbarContent() {
   };
 
   return (
-          <nav className="w-full bg-gray-900/60 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
+    <nav className="w-full bg-gray-900/60 backdrop-blur-md border-b border-white/10 px-6 py-3 flex items-center justify-between fixed top-0 z-50">
       {/* Left: Logo and App Name */}
       <div className="flex items-center gap-1">
         <div className="w-8 h-8 flex items-center justify-center">
@@ -102,13 +102,14 @@ function ServiceNavbarContent() {
           </svg>
           <span>{userName}</span>
         </div>
-        {/* Cart Button */}
-        <Link href="/customer/bookings" className="hover:text-[#E91E63] cursor-pointer flex items-center text-white">
+        {/* Cart Button - Add "Booking" text next to the icon */}
+        <Link href="/customer/bookings" className="hover:text-[#E91E63] cursor-pointer flex items-center text-white gap-1">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
           </svg>
+          <span>Booking</span>
         </Link>
-        <div className="relative ">
+        <div className="relative">
           <button
             className="hover:text-[#E91E63] cursor-pointer flex items-center text-white"
             onClick={() => setShowSettings((s) => !s)}
