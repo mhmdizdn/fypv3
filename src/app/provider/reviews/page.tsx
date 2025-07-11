@@ -221,7 +221,7 @@ export default function ProviderReviewsPage() {
       case 'high-rating':
         return reviews.filter(review => review.rating >= 4);
       case 'low-rating':
-        return reviews.filter(review => review.rating <= 2);
+        return reviews.filter(review => review.rating <= 3); // Changed from <= 2 to <= 3
       default:
         return reviews;
     }
@@ -331,7 +331,7 @@ export default function ProviderReviewsPage() {
                   { key: 'not-replied', label: 'Not Replied' },
                   { key: 'replied', label: 'Replied' },
                   { key: 'high-rating', label: '4-5 Stars' },
-                  { key: 'low-rating', label: '1-2 Stars' }
+                  { key: 'low-rating', label: '1-3 Star' } // Changed from '1-2 Stars' to '1-3 Star'
                 ].map(tab => (
                   <button
                     key={tab.key}

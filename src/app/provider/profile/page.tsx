@@ -31,6 +31,7 @@ export default function ProviderProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [isLocatingMe, setIsLocatingMe] = useState(false);
   const [providerData, setProviderData] = useState<ProviderProfile>({
     name: '',
     username: '',
@@ -364,6 +365,58 @@ export default function ProviderProfilePage() {
     await signOut({ callbackUrl: "/login" });
   };
 
+  const handleLocateMe = () => {
+    if (!navigator.geolocation) {
+      setMessage({ type: 'error', text: 'Geolocation is not supported by this browser.' });
+      return;
+    }
+
+    setIsLocatingMe(true);
+    setMessage({ type: '', text: '' });
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        // Update the map center
+        if (googleMapRef.current) {
+          googleMapRef.current.setCenter(currentLocation);
+          googleMapRef.current.setZoom(15);
+        }
+
+        // Update the shop location
+        updateShopLocation(currentLocation);
+
+        setMessage({ type: 'success', text: 'Location detected successfully!' });
+        setIsLocatingMe(false);
+      },
+      (error) => {
+        let errorMessage = 'Unable to detect your location.';
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'Location access denied by user. Please enable location services.';
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information is unavailable.';
+            break;
+          case error.TIMEOUT:
+            errorMessage = 'Location request timed out.';
+            break;
+        }
+        setMessage({ type: 'error', text: errorMessage });
+        setIsLocatingMe(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000
+      }
+    );
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Dark gradient background */}
@@ -576,6 +629,35 @@ export default function ProviderProfilePage() {
                       }`}
                     ></div>
                     <p className="text-sm text-gray-500 mb-2">Click on the map or drag the marker to set your shop location</p>
+                    
+                    <div className="mb-3">
+                      <button
+                        type="button"
+                        onClick={handleLocateMe}
+                        disabled={isLocatingMe}
+                        className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium rounded-lg shadow-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      >
+                        {isLocatingMe ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Detecting Location...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Locate Me
+                          </>
+                        )}
+                      </button>
+                      <p className="text-xs text-gray-500 mt-1">Use your current location as your shop location</p>
+                    </div>
+
                     {(!providerData.latitude || !providerData.longitude) && (
                       <p className="text-red-500 text-sm mb-2">Shop location is required to add services</p>
                     )}
