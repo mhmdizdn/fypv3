@@ -11,9 +11,19 @@ export default function IndexPage() {
   const router = useRouter();
   const [address, setAddress] = useState("");
   const [showSettings, setShowSettings] = useState(false);
-  const { data: session } = useSession();
-  const userName = (session?.user as any)?.name || (session?.user as any)?.username || "Account";
+  const { data: session, status } = useSession();
+  const [mounted, setMounted] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
+
+  // Add mounted state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Wait for session to load before showing username
+  const userName = mounted && status === "authenticated" && session?.user 
+    ? ((session.user as any)?.name || (session.user as any)?.username || "Account")
+    : "Account";
 
   // Use the map context
   const {
@@ -127,7 +137,7 @@ export default function IndexPage() {
               onClick={() => setShowSettings((s) => !s)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 3.75a.75.75 0 011.5 0v1.068a7.501 7.501 0 014.482 2.57l.76-.76a.75.75 0 111.06 1.06l-.76.76a7.501 7.501 0 012.57 4.482h1.068a.75.75 0 010 1.5h-1.068a7.501 7.501 0 01-2.57 4.482l.76.76a.75.75 0 11-1.06 1.06l-.76-.76a7.501 7.501 0 01-4.482 2.57v1.068a.75.75 0 01-1.5 0v-1.068a7.501 7.501 0 01-4.482-2.57l-.76.76a.75.75 0 11-1.06-1.06l.76-.76a7.501 7.501 0 01-2.57-4.482H3.75a.75.75 0 010-1.5h1.068a7.501 7.501 0 012.57-4.482l-.76-.76a.75.75 0 111.06-1.06l.76.76a7.501 7.501 0 014.482-2.57V3.75z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 3.75a.75.75 0 011.5 0v1.068a7.501 7.501 0 014.482 2.57l.76-.76a.75.75 0 111.06 1.06l-.76.76a7.501 7.501 0 012.57 4.482h1.068a.75.75 0 010 1.5h-1.068a7.501 7.501 0 01-2.57 4.482l.76.76a.75.75 0 11-1.06 1.06l-.76-.76a7.501 7.501 0 01-4.482 2.57V3.75z" />
                 <circle cx="12" cy="12" r="3" fill="#E91E63" />
               </svg>
             </button>

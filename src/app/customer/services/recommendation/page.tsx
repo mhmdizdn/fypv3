@@ -50,6 +50,7 @@ interface Review {
 function ServiceNavbarContent() {
   const searchParams = useSearchParams();
   const [mounted, setMounted] = useState(false);
+  const { data: session, status } = useSession(); // Add status
   
   useEffect(() => {
     setMounted(true);
@@ -57,9 +58,10 @@ function ServiceNavbarContent() {
 
   const address = mounted ? (searchParams.get('address') || 'Select your location') : 'Select your location';
 
-  // Get user name from session
-  const { data: session } = useSession();
-  const userName = mounted && session?.user?.name ? session.user.name : 'Account';
+  // Improved username logic
+  const userName = mounted && status === "authenticated" && session?.user 
+    ? ((session.user as any)?.name || (session.user as any)?.username || "Account")
+    : status === "loading" ? "Loading..." : "Account";
 
   const [showSettings, setShowSettings] = useState(false);
   const handleLogout = async () => {

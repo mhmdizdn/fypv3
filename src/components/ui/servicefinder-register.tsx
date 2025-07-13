@@ -295,11 +295,11 @@ const ServiceFinderRegister = ({ onSwitchToLogin }: ServiceFinderRegisterProps) 
       });
 
       if (signInResult?.ok) {
-        // Redirect based on user type
+        // Force page refresh and redirect to ensure session is properly loaded
         if (userType === "serviceProvider") {
-          router.push("/provider/dashboard");
+          window.location.href = "/provider/dashboard";
         } else {
-          router.push("/customer/index");
+          window.location.href = "/customer/index";
         }
       } else {
         // Handle sign-in errors with specific messages

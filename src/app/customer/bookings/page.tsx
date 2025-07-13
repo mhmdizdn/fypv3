@@ -58,9 +58,10 @@ function CustomerNavbar() {
     setMounted(true);
   }, []);
 
-  const userName = mounted && session?.user 
+  // Improved username logic
+  const userName = mounted && status === "authenticated" && session?.user 
     ? ((session.user as any)?.name || (session.user as any)?.username || "Account")
-    : "Account";
+    : status === "loading" ? "Loading..." : "Account";
 
   const handleLogout = async () => {
     localStorage.clear();
