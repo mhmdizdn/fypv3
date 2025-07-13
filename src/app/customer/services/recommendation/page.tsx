@@ -621,17 +621,6 @@ function ServiceRecommendationContent() {
                             <span className="text-gray-300">{service.name}</span>
                           </div>
                         )}
-
-                        <button 
-                          className="absolute top-2 right-2 bg-white/20 backdrop-blur-sm rounded-full p-2 shadow hover:bg-[#7919e6] transition-colors"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-[#E91E63]">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5.318 6.318a4.5 4.5 0 016.364 0l.318.318.318-.318a4.5 4.5 0 116.364 6.364L12 21.364l-6.682-6.682a4.5 4.5 0 010-6.364z" />
-                          </svg>
-                        </button>
                       </div>
                       <div className="p-4 flex-1 flex flex-col">
                         <div className="flex items-center gap-2 mb-1">

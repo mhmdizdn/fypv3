@@ -114,12 +114,6 @@ export default function UserProfilePage() {
           <span>{user.name}</span>
           
         </div>
-        {/* Cart Button */}
-        <button className="hover:text-[#E91E63] cursor-pointer flex items-center text-white" aria-label="Cart">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l1.4-7H6.6M7 13l-1.35 2.7A1 1 0 007 17h10a1 1 0 00.95-.68L19 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" />
-          </svg>
-        </button>
         <div className="relative">
           <button
             className="hover:text-[#E91E63]  cursor-pointer flex items-center text-white"
@@ -226,8 +220,8 @@ export default function UserProfilePage() {
               name="email"
               type="email" 
               value={user.email} 
-              onChange={handleChange}
-              className="w-full border border-white/20 rounded px-3 py-2 bg-white/10 backdrop-blur-sm text-gray-200 placeholder-gray-400" 
+              readOnly
+              className="w-full border border-white/20 rounded px-3 py-2 bg-white/5 backdrop-blur-sm text-gray-400 placeholder-gray-400 cursor-not-allowed" 
             />
             <p className="text-xs text-gray-400 mt-1">Changing your email will require you to login again.</p>
           </div>
