@@ -44,7 +44,7 @@ interface BookingFormProps {
 export function BookingForm({ service, onClose, onSuccess, customerAddress = '', customerCoordinates = null }: BookingFormProps) {
   const { data: session } = useSession();
   const userEmail = session?.user?.email || '';
-  const userName = (session?.user as any)?.name || (session?.user as any)?.username || '';
+  const userName = (session?.user as any)?.username || (session?.user as any)?.name || '';
 
   const [formData, setFormData] = useState({
     customerName: userName,

@@ -60,7 +60,7 @@ function CustomerNavbar() {
 
   // Improved username logic
   const userName = mounted && status === "authenticated" && session?.user 
-    ? ((session.user as any)?.name || (session.user as any)?.username || "Account")
+    ? ((session.user as any)?.username || (session.user as any)?.name || "Account")
     : status === "loading" ? "Loading..." : "Account";
 
   const handleLogout = async () => {

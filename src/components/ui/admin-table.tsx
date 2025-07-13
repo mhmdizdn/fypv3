@@ -305,7 +305,7 @@ export function AdminTable({ type, data, onDelete, onEdit, onView, onRowClick }:
   }
 
   const renderTableRows = () => {
-    return sortedData.map((item: any) => {
+    return sortedData.map((item: any, index: number) => {
       switch (type) {
         case 'users':
           const user = item as User;
@@ -316,7 +316,7 @@ export function AdminTable({ type, data, onDelete, onEdit, onView, onRowClick }:
               onClick={() => onRowClick && onRowClick(user.id)}
             >
               <TableCell className="font-semibold text-gray-900 py-4">
-                {user.id}
+                {index + 1}
               </TableCell>
               <TableCell className="text-gray-800 font-medium py-4">{user.username}</TableCell>
               <TableCell className="text-gray-700 py-4">{user.email}</TableCell>
@@ -363,7 +363,7 @@ export function AdminTable({ type, data, onDelete, onEdit, onView, onRowClick }:
               onClick={() => onRowClick && onRowClick(provider.id)}
             >
               <TableCell className="font-semibold text-gray-900 py-4">
-                {provider.id}
+                {index + 1}
               </TableCell>
               <TableCell className="text-gray-800 font-medium py-4">{provider.username}</TableCell>
               <TableCell className="text-gray-700 py-4">{provider.email}</TableCell>
@@ -420,7 +420,7 @@ export function AdminTable({ type, data, onDelete, onEdit, onView, onRowClick }:
               onClick={() => onRowClick && onRowClick(booking.id)}
             >
               <TableCell className="font-semibold text-gray-900 py-4">
-                {booking.id}
+                {index + 1}
               </TableCell>
               <TableCell className="text-gray-800 font-medium py-4">{booking.customerName}</TableCell>
               <TableCell className="text-gray-700 py-4">{booking.service.name}</TableCell>
@@ -480,7 +480,7 @@ export function AdminTable({ type, data, onDelete, onEdit, onView, onRowClick }:
               onClick={() => onRowClick && onRowClick(service.id)}
             >
               <TableCell className="font-semibold text-gray-900 py-4">
-                {service.id}
+                {index + 1}
               </TableCell>
               <TableCell className="text-gray-800 font-medium py-4">{service.name}</TableCell>
               <TableCell className="py-4">
@@ -532,7 +532,7 @@ export function AdminTable({ type, data, onDelete, onEdit, onView, onRowClick }:
               onClick={() => onRowClick && onRowClick(review.id)}
             >
               <TableCell className="font-semibold text-gray-900 py-4">
-                {review.id}
+                {index + 1}
               </TableCell>
               <TableCell className="text-gray-800 font-medium py-4">{review.customer.name || review.customer.username}</TableCell>
               <TableCell className="text-gray-700 py-4">{review.service.provider.name || review.service.provider.username}</TableCell>
