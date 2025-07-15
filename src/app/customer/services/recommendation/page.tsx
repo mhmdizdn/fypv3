@@ -348,6 +348,40 @@ function ServiceRecommendationContent() {
     }
   };
 
+  // Add this function right here:
+  const handleNavigateToShop = (provider: any) => {
+    if (provider.latitude && provider.longitude) {
+      const destination = `${provider.latitude},${provider.longitude}`;
+      const label = encodeURIComponent(provider.name || 'Service Provider');
+      
+      // Create Google Maps URL for navigation
+      const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+      
+      // For mobile devices, try to open in the native maps app
+      if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // Try to open in native maps app first
+        const nativeMapsUrl = `maps://maps.google.com/maps/dir/?daddr=${destination}`;
+        
+        // Create a temporary link and try to open native app
+        const link = document.createElement('a');
+        link.href = nativeMapsUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Fallback to web version after a short delay
+        setTimeout(() => {
+          window.open(googleMapsUrl, '_blank');
+        }, 1000);
+      } else {
+        // For desktop, open in new tab
+        window.open(googleMapsUrl, '_blank');
+      }
+    } else {
+      alert('Location information not available for this provider.');
+    }
+  };
+
   // Filter and sort logic
   const filteredServices = services.filter(service => {
     // Text search filter
