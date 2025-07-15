@@ -5,7 +5,7 @@ const nextConfig = {
   
   // Configure images for proper functionality
   images: {
-    domains: ['localhost'],
+    domains: ['localhost'], // Add your domain here
     remotePatterns: [
       {
         protocol: 'https',

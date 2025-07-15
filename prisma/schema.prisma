@@ -78,6 +78,7 @@ model Booking {
   status          BookingStatus @default(PENDING)
   totalAmount     Float
   notes           String?
+  completionImage String?
   review          Review?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

@@ -310,7 +310,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
         if (!result?.ok) {
           // Handle specific admin errors
           if (result?.error?.includes("password")) {
-            throw new Error("Incorrect admin password. Use 'admin123' for default admin.");
+            throw new Error("Incorrect admin password.");
           } else if (result?.error?.includes("not found")) {
             throw new Error("Admin account not found. Click 'Setup Admin Account' to create it.");
           } else {
@@ -489,17 +489,6 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
               </motion.div>
             )}
 
-            {/* Success Message for Admin Setup */}
-            {isAdminEmail && !error && isSettingUpAdmin === false && email === "admin@gmail.com" && password === "admin123" && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm"
-              >
-                Admin account created successfully! You can now sign in.
-              </motion.div>
-            )}
-
             {/* Admin Notice */}
             {isAdminEmail && !isAdminNotFoundError && (
               <motion.div
@@ -508,9 +497,7 @@ const ServiceFinderSignIn = ({ onSwitchToRegister }: ServiceFinderSignInProps) =
                 className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-blue-400 text-sm"
               >
                 Admin login detected. You will be redirected to the admin dashboard.
-                <div className="mt-2 text-xs text-blue-300">
-                  Default credentials: admin@gmail.com / admin123
-                </div>
+
               </motion.div>
             )}
 

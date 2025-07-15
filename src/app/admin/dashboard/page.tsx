@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AdminTable } from "@/components/ui/admin-table";
 import { Button } from "@/components/ui/button";
+import { CompletionEvidenceViewer } from "@/components/ui/completion-evidence-viewer";
 
 interface User {
   id: number;
@@ -36,6 +37,7 @@ interface Booking {
   totalAmount: number;
   notes: string | null;
   createdAt: string;
+  completionImage?: string;
   service: {
     id: number;
     name: string;
@@ -1172,6 +1174,15 @@ function DetailModal({ type, item, onClose }: {
               <label className="text-sm font-semibold text-gray-600">Booking Created</label>
               <p className="text-gray-900 font-medium">{formatDate(item.createdAt)}</p>
             </div>
+            {item.status === 'COMPLETED' && item.completionImage && (
+              <div className="mt-4">
+                <CompletionEvidenceViewer
+                  imageUrl={item.completionImage}
+                  serviceName={item.service.name}
+                  textColor="text-gray-900"
+                />
+              </div>
+            )}
           </div>
         );
       case 'services':

@@ -5,6 +5,8 @@ import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { NotificationDropdown } from '@/components/ui/notification-dropdown';
+import { CompletionEvidenceModal } from '@/components/ui/completion-evidence-modal';
+import { CompletionEvidenceViewer } from '@/components/ui/completion-evidence-viewer';
 
 interface Booking {
   id: number;
@@ -31,6 +33,7 @@ interface Booking {
     email: string;
     username: string;
   };
+  completionImage?: string;
 }
 
 function ProviderNavbar() {
@@ -117,6 +120,9 @@ export default function ProviderBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<string>('all');
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [selectedBookingId, setSelectedBookingId] = useState<number | null>(null);
+  const [uploadingEvidence, setUploadingEvidence] = useState(false);
 
   useEffect(() => {
     fetchBookings();
@@ -211,7 +217,14 @@ export default function ProviderBookingsPage() {
         ];
       case 'IN_PROGRESS':
         return [
-          { label: 'Complete', status: 'COMPLETED', color: 'bg-purple-600 hover:bg-purple-700' }
+          { 
+            label: 'Complete with Evidence',
+            action: () => {
+              setSelectedBookingId(booking.id);
+              setShowCompletionModal(true);
+            },
+            color: 'bg-purple-600 hover:bg-purple-700'
+          }
         ];
       default:
         return [];
@@ -290,6 +303,43 @@ export default function ProviderBookingsPage() {
       return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
     }
     return null;
+  };
+
+  const handleCompletionEvidenceUpload = async (bookingId: number, image: File) => {
+    try {
+      setUploadingEvidence(true);
+      
+      const formData = new FormData();
+      formData.append('image', image);
+
+      const response = await fetch(`/api/bookings/${bookingId}/completion`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        // Try to parse error as JSON, but handle non-JSON responses
+        let errorMessage = 'Failed to upload completion evidence';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+        } catch (e) {
+          // If response is not JSON, try to get text
+          const textError = await response.text();
+          console.error('Non-JSON error response:', textError);
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      await fetchBookings(); // Refresh the bookings list
+      setShowCompletionModal(false);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert(error instanceof Error ? error.message : 'Failed to upload completion evidence');
+    } finally {
+      setUploadingEvidence(false);
+    }
   };
 
   const filteredBookings = bookings.filter(booking => {
@@ -442,17 +492,30 @@ export default function ProviderBookingsPage() {
                     </div>
                   )}
 
+                  {booking.status === 'COMPLETED' && booking.completionImage && (
+                    <CompletionEvidenceViewer
+                      imageUrl={booking.completionImage}
+                      serviceName={booking.service.name}
+                    />
+                  )}
+
                   <div className="flex justify-between items-center pt-4 border-t border-gray-600">
                     <p className="text-sm text-gray-400">
                       Booked on {formatDate(booking.createdAt)}
                     </p>
                     <div className="flex gap-2">
-                      {getAvailableActions(booking).map((action) => (
+                      {getAvailableActions(booking).map((action, index) => (
                         <Button
-                          key={action.status}
-                          onClick={() => handleUpdateBookingStatus(booking.id, action.status)}
-                          className={`${action.color} text-white`}
+                          key={index}
+                          onClick={() => {
+                            if (action.action) {
+                              action.action();
+                            } else if (action.status) {
+                              handleUpdateBookingStatus(booking.id, action.status);
+                            }
+                          }}
                           disabled={action.disabled}
+                          className={action.color}
                         >
                           {action.label}
                         </Button>
@@ -485,6 +548,22 @@ export default function ProviderBookingsPage() {
           )}
         </div>
       </div>
+
+      {/* Add the CompletionEvidenceModal */}
+      <CompletionEvidenceModal
+        isOpen={showCompletionModal}
+        onClose={() => {
+          setShowCompletionModal(false);
+          setSelectedBookingId(null);
+        }}
+        onSubmit={(image) => {
+          if (selectedBookingId) {
+            return handleCompletionEvidenceUpload(selectedBookingId, image);
+          }
+          return Promise.resolve();
+        }}
+        loading={uploadingEvidence}
+      />
     </>
   );
 } 

@@ -7,6 +7,7 @@ import Link from 'next/link';
 
 // Import the RatingModal component
 const RatingModal = require('@/components/ui/rating-modal').RatingModal;
+import { CompletionEvidenceViewer } from '@/components/ui/completion-evidence-viewer';
 
 interface Review {
   id: number;
@@ -47,6 +48,7 @@ interface Booking {
       longitude?: number;
     };
   };
+  completionImage?: string | null; // Added for completion evidence
 }
 
 function CustomerNavbar() {
@@ -451,7 +453,7 @@ export default function CustomerBookingsPage() {
           ) : (
             <div className="grid gap-6">
               {filteredBookings.map((booking) => (
-                <div key={booking.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6 cursor-pointer">
+                <div key={booking.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-lg shadow-md p-6">
                   <div className="flex justify-between items-start mb-4">
                                           <div>
                         <h3 className="text-xl font-semibold text-gray-100">{booking.service.name}</h3>
@@ -521,6 +523,13 @@ export default function CustomerBookingsPage() {
                         </div>
                       )}
                     </div>
+                  )}
+
+                  {booking.status === 'COMPLETED' && booking.completionImage && (
+                    <CompletionEvidenceViewer
+                      imageUrl={booking.completionImage}
+                      serviceName={booking.service.name}
+                    />
                   )}
 
                                       <div className="flex justify-between items-center pt-4 border-t border-white/20">
