@@ -790,13 +790,17 @@ function EditModal({ type, item, onSave, onClose }: {
             </div>
             <div>
               <label className={labelClass}>Service Type</label>
-              <input
-                type="text"
+              <select
                 value={formData.serviceType || ''}
                 onChange={(e) => setFormData({ ...formData, serviceType: e.target.value })}
                 className={inputClass}
-                placeholder="Enter service type"
-              />
+              >
+                <option value="" disabled>Select service type</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Pest Control">Pest Control</option>
+              </select>
             </div>
             <div>
               <label className={labelClass}>Phone</label>

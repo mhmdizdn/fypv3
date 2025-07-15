@@ -588,13 +588,18 @@ export default function ProviderProfilePage() {
                   
                   <div className="mb-4">
                     <label className="block text-gray-700 mb-2">Service Type</label>
-                    <input
-                      type="text"
+                    <select
                       name="serviceType"
                       value={providerData.serviceType}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    >
+                      <option value="" disabled>Select service type</option>
+                      <option value="Plumbing">Plumbing</option>
+                      <option value="Cleaning">Cleaning</option>
+                      <option value="Electrical">Electrical</option>
+                      <option value="Pest Control">Pest Control</option>
+                    </select>
                   </div>
 
                   <div className="mb-4">

@@ -223,7 +223,7 @@ export default function UserProfilePage() {
               readOnly
               className="w-full border border-white/20 rounded px-3 py-2 bg-white/5 backdrop-blur-sm text-gray-400 placeholder-gray-400 cursor-not-allowed" 
             />
-            <p className="text-xs text-gray-400 mt-1">Changing your email will require you to login again.</p>
+            <p className="text-xs text-gray-400 mt-1">Email address cannot be changed.</p>
           </div>
         </div>
 

@@ -480,16 +480,20 @@ const ServiceFinderRegister = ({ onSwitchToLogin }: ServiceFinderRegisterProps) 
                   <label htmlFor="serviceType" className="block text-sm font-medium text-gray-300 mb-1">
                     Service Type <span className="text-[#7919e6]">*</span>
                   </label>
-                  <input
+                  <select
                     id="serviceType"
                     name="serviceType"
-                    type="text"
                     value={formData.serviceType}
                     onChange={handleInputChange}
-                    placeholder="e.g., Plumbing, Cleaning, Electrical"
                     required
-                    className="w-full h-10 px-3 py-2 bg-[#13151f] border border-[#2a2d3a] rounded-lg placeholder:text-gray-500 text-gray-200 focus:border-[#7919e6] focus:outline-none transition-colors"
-                  />
+                    className="w-full h-10 px-3 py-2 bg-[#13151f] border border-[#2a2d3a] rounded-lg text-gray-200 focus:border-[#7919e6] focus:outline-none transition-colors"
+                  >
+                    <option value="" disabled className="text-gray-500">Select service type</option>
+                    <option value="Plumbing" className="text-gray-900">Plumbing</option>
+                    <option value="Cleaning" className="text-gray-900">Cleaning</option>
+                    <option value="Electrical" className="text-gray-900">Electrical</option>
+                    <option value="Pest Control" className="text-gray-900">Pest Control</option>
+                  </select>
                 </motion.div>
               )}
 
