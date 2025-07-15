@@ -167,7 +167,10 @@ function ServiceRecommendationContent() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [ratingFilter, setRatingFilter] = useState('all');
-  const [showFilterModal, setShowFilterModal] = useState(false); // Add this line
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  // Add category filter states
+  const [categories, setCategories] = useState<string[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   
   const searchParams = useSearchParams();
   
@@ -199,6 +202,13 @@ function ServiceRecommendationContent() {
         if (response.ok) {
           const data = await response.json();
           setServices(data.services || []);
+          
+          // Extract unique categories
+          const uniqueCategories = Array.from(
+            new Set(data.services.map((service: Service) => service.category))
+          ) as string[];
+          
+          setCategories(['all', ...uniqueCategories]);
         } else {
           console.error('Failed to fetch services');
         }
@@ -346,6 +356,9 @@ function ServiceRecommendationContent() {
       (service.provider.name && service.provider.name.toLowerCase().includes(search.toLowerCase())) ||
       service.provider.serviceType.toLowerCase().includes(search.toLowerCase());
     
+    // Category filter
+    const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
+    
     // Rating filter
     let matchesRating = true;
     if (ratingFilter !== 'all') {
@@ -362,7 +375,7 @@ function ServiceRecommendationContent() {
       }
     }
     
-    return matchesSearch && matchesRating;
+    return matchesSearch && matchesCategory && matchesRating;
   }).sort((a, b) => {
     if (sort === 'price-high') {
       return b.price - a.price;
@@ -474,6 +487,27 @@ function ServiceRecommendationContent() {
                       </button>
                     </div>
                     
+                    {/* Category Filter */}
+                    <div className="mb-6">
+                      <div className="font-semibold mb-3 text-gray-200">Category</div>
+                      <div className="flex flex-col gap-3">
+                        {categories.map((category) => (
+                          <label key={category} className="flex items-center gap-3 text-gray-300 cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name="category" 
+                              checked={categoryFilter === category} 
+                              onChange={() => setCategoryFilter(category)} 
+                              className="text-[#7919e6]"
+                            />
+                            <span className="capitalize">
+                              {category === 'all' ? 'All Categories' : category}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    
                     {/* Sort by */}
                     <div className="mb-6">
                       <div className="font-semibold mb-3 text-gray-200">Sort by</div>
@@ -580,10 +614,11 @@ function ServiceRecommendationContent() {
                       </button>
                       <button
                         onClick={() => {
-                          setSort('nearby');
+                          setCategoryFilter('all');
                           setRatingFilter('all');
+                          setSort('nearby');
                         }}
-                        className="px-4 py-2 bg-white/10 text-gray-300 rounded-lg hover:bg-white/20 transition-colors cursor-pointer"
+                        className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
                       >
                         Reset
                       </button>
