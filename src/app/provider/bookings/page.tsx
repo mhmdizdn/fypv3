@@ -160,6 +160,38 @@ export default function ProviderBookingsPage() {
     }
   };
 
+  // Add this new function to check if service can be started
+  const canStartService = (scheduledDate: string, scheduledTime: string) => {
+    const now = new Date();
+    const scheduledDateTime = new Date(`${scheduledDate.split('T')[0]}T${scheduledTime}:00`);
+    
+    // Allow starting 15 minutes before scheduled time (buffer for preparation)
+    const bufferTime = 15 * 60 * 1000; // 15 minutes in milliseconds
+    const earliestStartTime = new Date(scheduledDateTime.getTime() - bufferTime);
+    
+    return now >= earliestStartTime;
+  };
+
+  // Function to get time until service can be started
+  const getTimeUntilStart = (scheduledDate: string, scheduledTime: string) => {
+    const now = new Date();
+    const scheduledDateTime = new Date(`${scheduledDate.split('T')[0]}T${scheduledTime}:00`);
+    const bufferTime = 15 * 60 * 1000; // 15 minutes buffer
+    const earliestStartTime = new Date(scheduledDateTime.getTime() - bufferTime);
+    
+    if (now >= earliestStartTime) return null;
+    
+    const timeDiff = earliestStartTime.getTime() - now.getTime();
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else {
+      return `${minutes}m`;
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'PENDING': return 'bg-yellow-900/30 border border-yellow-500/50 text-yellow-300';
@@ -224,20 +256,35 @@ export default function ProviderBookingsPage() {
     return null;
   };
 
-  const getAvailableActions = (status: string) => {
+  const getAvailableActions = (booking: Booking) => {
+    const { status, scheduledDate, scheduledTime } = booking;
+    
     switch (status) {
       case 'PENDING':
         return [
-          { label: 'Confirm', status: 'CONFIRMED', color: 'bg-blue-600 hover:bg-blue-700 cursor-pointer' },
-          { label: 'Reject', status: 'REJECTED', color: 'bg-red-600 hover:bg-red-700 cursor-pointer' }
+          { label: 'Confirm', status: 'CONFIRMED', color: 'bg-blue-600 hover:bg-blue-700 cursor-pointer', enabled: true },
+          { label: 'Reject', status: 'REJECTED', color: 'bg-red-600 hover:bg-red-700 cursor-pointer', enabled: true }
         ];
       case 'CONFIRMED':
+        const canStart = canStartService(scheduledDate, scheduledTime);
+        const timeUntil = getTimeUntilStart(scheduledDate, scheduledTime);
+        
         return [
-          { label: 'Start Service', status: 'IN_PROGRESS', color: 'bg-purple-600 hover:bg-purple-700 cursor-pointer' }
+          { 
+            label: canStart ? 'Start Service' : `Start in ${timeUntil}`, 
+            status: 'IN_PROGRESS', 
+            color: canStart 
+              ? 'bg-purple-600 hover:bg-purple-700 cursor-pointer' 
+              : 'bg-gray-500 cursor-not-allowed', 
+            enabled: canStart,
+            tooltip: canStart 
+              ? 'You can start the service now' 
+              : `Service can be started 15 minutes before scheduled time (${scheduledTime})`
+          }
         ];
       case 'IN_PROGRESS':
         return [
-          { label: 'Complete', status: 'COMPLETED', color: 'bg-green-600 hover:bg-green-700' }
+          { label: 'Complete', status: 'COMPLETED', color: 'bg-green-600 hover:bg-green-700 cursor-pointer', enabled: true }
         ];
       default:
         return [];
@@ -399,15 +446,31 @@ export default function ProviderBookingsPage() {
                       Booked on {formatDate(booking.createdAt)}
                     </p>
                     <div className="flex gap-2 flex-wrap">
-                      {getAvailableActions(booking.status).map((action) => (
-                        <Button
-                          key={action.status}
-                          size="sm"
-                          className={`text-white cursor-pointer ${action.color}`}
-                          onClick={() => handleUpdateBookingStatus(booking.id, action.status)}
-                        >
-                          {action.label}
-                        </Button>
+                      {getAvailableActions(booking).map((action) => (
+                        <div key={action.status} className="relative group">
+                          <Button
+                            size="sm"
+                            className={`text-white ${action.color} ${!action.enabled ? 'opacity-60' : ''}`}
+                            onClick={() => {
+                              if (action.enabled) {
+                                if (action.status === 'IN_PROGRESS' && !canStartService(booking.scheduledDate, booking.scheduledTime)) {
+                                  alert('You can only start the service 15 minutes before the scheduled time.');
+                                  return;
+                                }
+                                handleUpdateBookingStatus(booking.id, action.status);
+                              }
+                            }}
+                            disabled={!action.enabled}
+                          >
+                            {action.label}
+                          </Button>
+                          {action.tooltip && !action.enabled && (
+                            <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
+                              {action.tooltip}
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                            </div>
+                          )}
+                        </div>
                       ))}
                       {getNavigationUrl(booking.customerAddress) && booking.status !== 'COMPLETED' && booking.status !== 'CANCELLED' && (
                         <Button
