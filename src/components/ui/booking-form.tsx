@@ -66,6 +66,13 @@ export function BookingForm({ service, onClose, onSuccess, customerAddress = '',
     fetchServiceReviews();
   }, [service.id]);
 
+  // Add this new useEffect hook
+  useEffect(() => {
+    if (formData.customerName && formData.customerEmail) {
+      // router.refresh(); // This line was removed as per the new_code, as it's not in the new_code.
+    }
+  }, [formData.customerName, formData.customerEmail]); // This line was changed as per the new_code, as it's not in the new_code.
+
   // Fetch reviews for the service
   const fetchServiceReviews = async () => {
     try {
