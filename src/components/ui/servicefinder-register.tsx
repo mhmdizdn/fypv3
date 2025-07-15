@@ -486,7 +486,7 @@ const ServiceFinderRegister = ({ onSwitchToLogin }: ServiceFinderRegisterProps) 
                     value={formData.serviceType}
                     onChange={handleInputChange}
                     required
-                    className="w-full h-10 px-3 py-2 bg-[#13151f] border border-[#2a2d3a] rounded-lg text-gray-200 focus:border-[#7919e6] focus:outline-none transition-colors"
+                    className="w-full h-10 px-3 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-[#7919e6] focus:outline-none transition-colors"
                   >
                     <option value="" disabled className="text-gray-500">Select service type</option>
                     <option value="Plumbing" className="text-gray-900">Plumbing</option>
