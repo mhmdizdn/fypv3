@@ -148,7 +148,7 @@ export function NotificationDropdown({ onNotificationClick }: NotificationDropdo
                 size="sm"
                 onClick={markAllAsRead}
                 disabled={loading}
-                className="text-xs"
+                className="text-xs text-black"
               >
                 {loading ? 'Marking...' : 'Mark all read'}
               </Button>
@@ -200,16 +200,6 @@ export function NotificationDropdown({ onNotificationClick }: NotificationDropdo
             )}
           </div>
           
-          {notifications.length > 0 && (
-            <div className="p-2 border-t border-gray-200 text-center">
-              <button 
-                className="text-sm text-[#7919e6] hover:underline"
-                onClick={() => setShowDropdown(false)}
-              >
-                View all notifications
-              </button>
-            </div>
-          )}
         </div>
       )}
     </div>
