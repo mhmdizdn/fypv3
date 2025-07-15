@@ -121,18 +121,6 @@ export async function PATCH(
       }, { status: 400 });
     }
 
-    // Only providers can confirm, reject, or mark as in progress/completed
-    // Only customers can cancel pending bookings
-    if (status) {
-      if (['CONFIRMED', 'REJECTED', 'IN_PROGRESS', 'COMPLETED'].includes(status) && !isProvider) {
-        return NextResponse.json({ error: 'Only service providers can update to this status' }, { status: 403 });
-      }
-      
-      if (status === 'CANCELLED' && !isCustomer && !isProvider) {
-        return NextResponse.json({ error: 'Only customers or providers can cancel bookings' }, { status: 403 });
-      }
-    }
-
     // Update the booking
     const updateData: any = {};
     if (status) updateData.status = status;
